@@ -77,7 +77,7 @@ main(void) {
 
 float
 degreesToRadians(float angleDegrees) {
-    return angleDegrees * M_PI / 180.0;
+    return angleDegrees * PI / 180.0;
 }
 
 void
