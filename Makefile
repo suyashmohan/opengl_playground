@@ -2,10 +2,10 @@ IDIR = -I include/
 LDIR = -L lib/
 CFLAGS = -Wall -pedantic
 
-SRC=$(wildcard ./src/*.c)
+SRC=$(wildcard ./src/*.c) $(wildcard ./src/*/*.c)
 
 gl_mac: $(SRC)
-	clang -o $@ $^ $(IDIR) $(LDIR) $(CFLAGS) -lglfw
+	clang -o $@ $^ $(IDIR) $(LDIR) $(CFLAGS) -lglfw -std=c99
 
 gl_win: $(SRC)
 	tcc -o $@.exe $^ $(IDIR) $(LDIR) $(CFLAGS) -lglfw3 -DSTBI_NO_SIMD
