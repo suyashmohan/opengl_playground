@@ -5,12 +5,11 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
-GLFWwindow *app_init(int width, int height)
-{
-    if (!glfwInit())
-    {
+GLFWwindow*
+app_init(int width, int height) {
+    if (!glfwInit()) {
         printf("Unable to init glfw");
         return NULL;
     }
@@ -23,9 +22,8 @@ GLFWwindow *app_init(int width, int height)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
 
-    GLFWwindow *window = glfwCreateWindow(width, height, "OpenGL", NULL, NULL);
-    if (window == NULL)
-    {
+    GLFWwindow* window = glfwCreateWindow(width, height, "OpenGL", NULL, NULL);
+    if (window == NULL) {
         printf("Unable to create window");
         glfwTerminate();
         return NULL;
@@ -34,8 +32,7 @@ GLFWwindow *app_init(int width, int height)
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         printf("Unabel to load OpenGL");
         return NULL;
     }
@@ -47,25 +44,25 @@ GLFWwindow *app_init(int width, int height)
     return window;
 }
 
-void app_quit(GLFWwindow *window)
-{
+void
+app_quit(GLFWwindow* window) {
     glfwDestroyWindow(window);
     glfwTerminate();
 }
 
-int app_running(GLFWwindow *window)
-{
+int
+app_running(GLFWwindow* window) {
     return !glfwWindowShouldClose(window);
 }
 
-void app_swap_and_poll(GLFWwindow *window)
-{
+void
+app_swap_and_poll(GLFWwindow* window) {
     glfwSwapBuffers(window);
     glfwPollEvents();
 }
 
-int gfx_shader_compile(GLenum type, const char *source)
-{
+int
+gfx_shader_compile(GLenum type, const char* source) {
     int success;
     char infoLog[512];
 
@@ -73,8 +70,7 @@ int gfx_shader_compile(GLenum type, const char *source)
     glShaderSource(shader, 1, &source, NULL);
     glCompileShader(shader);
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
+    if (!success) {
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
         printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n%s\n", infoLog);
         return 0;
@@ -82,16 +78,15 @@ int gfx_shader_compile(GLenum type, const char *source)
     return shader;
 }
 
-int gfx_shader_program(const char *vertSrc, const char *fragSrc)
-{
+int
+gfx_shader_program(const char* vertSrc, const char* fragSrc) {
     int success;
     char infoLog[512];
 
     int vertexShader = gfx_shader_compile(GL_VERTEX_SHADER, vertSrc);
     int fragmentShader = gfx_shader_compile(GL_FRAGMENT_SHADER, fragSrc);
 
-    if (!vertexShader || !fragmentShader)
-    {
+    if (!vertexShader || !fragmentShader) {
         return 0;
     }
 
@@ -101,8 +96,7 @@ int gfx_shader_program(const char *vertSrc, const char *fragSrc)
     glLinkProgram(shaderProgram);
 
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success)
-    {
+    if (!success) {
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
         printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n%s\n", infoLog);
         return 0;
@@ -114,13 +108,13 @@ int gfx_shader_program(const char *vertSrc, const char *fragSrc)
     return shaderProgram;
 }
 
-void gfx_shader_destroy(int shaderProgram)
-{
+void
+gfx_shader_destroy(int shaderProgram) {
     glDeleteProgram(shaderProgram);
 }
 
-unsigned int gfx_texture_load(const char *file)
-{
+unsigned int
+gfx_texture_load(const char* file) {
     // load texture
     unsigned int texture;
     glGenTextures(1, &texture);
@@ -132,9 +126,8 @@ unsigned int gfx_texture_load(const char *file)
 
     int imgW, imgH, nrChannels;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char *data = stbi_load(file, &imgW, &imgH, &nrChannels, 0);
-    if (!data)
-    {
+    unsigned char* data = stbi_load(file, &imgW, &imgH, &nrChannels, 0);
+    if (!data) {
         printf("Unabel to load image: %s\n", file);
         return 0;
     }
@@ -146,13 +139,13 @@ unsigned int gfx_texture_load(const char *file)
     return texture;
 }
 
-void gfx_texture_destroy(unsigned int texture)
-{
+void
+gfx_texture_destroy(unsigned int texture) {
     glDeleteTextures(1, &texture);
 }
 
-Mesh gfx_mesh_load(int countVertices, int countIndices, float vertices[], unsigned int indices[], float colors[], float textures[])
-{
+Mesh
+gfx_mesh_load(int countVertices, int countIndices, float vertices[], unsigned int indices[], float colors[], float textures[]) {
     Mesh m;
 
     glGenVertexArrays(1, &m.vao);
@@ -187,8 +180,8 @@ Mesh gfx_mesh_load(int countVertices, int countIndices, float vertices[], unsign
     return m;
 }
 
-void gfx_mesh_free(Mesh m)
-{
+void
+gfx_mesh_free(Mesh m) {
     glDeleteVertexArrays(1, &m.vao);
     glDeleteBuffers(1, &m.ebo);
     glDeleteBuffers(1, &m.vbo_colors);
@@ -196,7 +189,7 @@ void gfx_mesh_free(Mesh m)
     glDeleteBuffers(1, &m.vbo_vertices);
 }
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height)
-{
+void
+framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }

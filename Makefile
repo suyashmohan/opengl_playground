@@ -9,3 +9,6 @@ gl_mac: $(SRC)
 
 gl_win: $(SRC)
 	tcc -o $@.exe $^ $(IDIR) $(LDIR) $(CFLAGS) -lglfw3 -DSTBI_NO_SIMD
+
+astyle:
+	astyle --options="astyle-code-format.cfg" "src/*.c,*.h"

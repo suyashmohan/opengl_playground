@@ -4,13 +4,13 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-void processInput(GLFWwindow *window);
+void processInput(GLFWwindow* window);
 float degreesToRadians(float angleDegrees);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-const char *vertexShaderSource =
+const char* vertexShaderSource =
     "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
     "layout (location = 1) in vec3 aColor;\n"
@@ -25,7 +25,7 @@ const char *vertexShaderSource =
     "   TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
     "}\0";
 
-const char *fragmentShaderSource =
+const char* fragmentShaderSource =
     "#version 330 core\n"
     "out vec4 FragColor;\n"
     "in vec3 ourColor;\n"
@@ -36,62 +36,32 @@ const char *fragmentShaderSource =
     "   FragColor = texture(texture1, TexCoord);\n"
     "}\n\0";
 
+// positions
 float vertices[] = {
-    // positions
-    -0.5f,
-    -0.5f,
-    0.5f,
-    0.5f,
-    -0.5f,
-    0.5f,
-    0.5f,
-    0.5f,
-    0.5f,
-    -0.5f,
-    0.5f,
-    0.5f,
-    -0.5f,
-    -0.5f,
-    -0.5f,
-    0.5f,
-    -0.5f,
-    -0.5f,
-    0.5f,
-    0.5f,
-    -0.5f,
-    -0.5f,
-    0.5f,
-    -0.5f,
-};
+    -0.5f, -0.5f, 0.5f,
+        0.5f, -0.5f, 0.5f,
+        0.5f, 0.5f, 0.5f,
+        -0.5f, 0.5f, 0.5f,
+        -0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f, 0.5f, -0.5f,
+        -0.5f, 0.5f, -0.5f,
+    };
+
+// colors
 float colors[] = {
-    // colors
-    1.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    1.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    0.0f,
-    1.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    1.0f,
-    0.0f,
-    0.0f,
-    0.0f,
-    1.0f,
-    1.0f,
-    1.0f,
-    0.0f,
+    1.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 1.0f,
+    1.0f, 1.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 1.0f,
+    1.0f, 1.0f, 0.0f,
 };
+
+// textures
 float textcoords[] = {
-    // textures
     0.0f, 0.0f,
     1.0f, 0.0f,
     1.0f, 1.0f,
@@ -99,7 +69,9 @@ float textcoords[] = {
     0.0f, 1.0f,
     1.0f, 1.0f,
     1.0f, 0.0f,
-    0.0f, 0.0f};
+    0.0f, 0.0f
+};
+
 unsigned int indices[] = {
     0, 1, 2,
     2, 3, 0,
@@ -117,18 +89,17 @@ unsigned int indices[] = {
     1, 0, 4,
     // top
     3, 2, 6,
-    6, 7, 3};
+    6, 7, 3
+};
 
-int main(void)
-{
-    GLFWwindow *window = app_init(SCR_WIDTH, SCR_HEIGHT);
-    if (window == NULL)
-    {
+int
+main(void) {
+    GLFWwindow* window = app_init(SCR_WIDTH, SCR_HEIGHT);
+    if (window == NULL) {
         return EXIT_FAILURE;
     }
     int shaderProgram = gfx_shader_program(vertexShaderSource, fragmentShaderSource);
-    if (shaderProgram == 0)
-    {
+    if (shaderProgram == 0) {
         return EXIT_FAILURE;
     }
 
@@ -136,8 +107,7 @@ int main(void)
 
     // load texture
     unsigned int texture1 = gfx_texture_load("wall.jpg");
-    if (texture1 == 0)
-    {
+    if (texture1 == 0) {
         return EXIT_FAILURE;
     }
 
@@ -156,8 +126,7 @@ int main(void)
 
     GLint mvp_location = glGetUniformLocation(shaderProgram, "MVP");
 
-    while (app_running(window))
-    {
+    while (app_running(window)) {
         processInput(window);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -174,7 +143,7 @@ int main(void)
         mat4x4_rotate_X(n, n, (float)glfwGetTime());
         mat4x4_mul(vp, p, v);
         mat4x4_mul(mvp, vp, n);
-        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat *)mvp);
+        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*)mvp);
 
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
@@ -189,13 +158,13 @@ int main(void)
     return EXIT_SUCCESS;
 }
 
-float degreesToRadians(float angleDegrees)
-{
+float
+degreesToRadians(float angleDegrees) {
     return angleDegrees * M_PI / 180.0;
 }
 
-void processInput(GLFWwindow *window)
-{
+void
+processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+    { glfwSetWindowShouldClose(window, true); }
 }
