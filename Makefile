@@ -1,5 +1,3 @@
-CC = clang
-LIBS  = -lglfw
 IDIR = -I include/
 LDIR = -L lib/
 CFLAGS = -Wall -pedantic
@@ -7,7 +5,7 @@ CFLAGS = -Wall -pedantic
 SRC=$(wildcard ./src/*.c)
 
 gl_mac: $(SRC)
-	$(CC) -o $@ $^ $(IDIR) $(LDIR) $(CFLAGS) $(LIBS)
+	clang -o $@ $^ $(IDIR) $(LDIR) $(CFLAGS) -lglfw
 
-clean:
-	rm gl_mac
+gl_win: $(SRC)
+	tcc -o $@.exe $^ $(IDIR) $(LDIR) $(CFLAGS) -lglfw3 -DSTBI_NO_SIMD
