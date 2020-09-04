@@ -25,7 +25,7 @@ void gfx_shader_destroy(int shaderProgram);
 unsigned int gfx_texture_load(const char* file);
 void gfx_texture_destroy(unsigned int texture);
 
-Mesh gfx_mesh_load(int countVertices, int countIndices, float vertices[], unsigned int indices[], float colors[], float textures[]);
+Mesh gfx_mesh_load(int countVertices, int countIndices, const float vertices[], const unsigned int indices[], const float colors[], const float textures[]);
 void gfx_mesh_free(Mesh m);
 
 #endif

@@ -145,7 +145,7 @@ gfx_texture_destroy(unsigned int texture) {
 }
 
 Mesh
-gfx_mesh_load(int countVertices, int countIndices, float vertices[], unsigned int indices[], float colors[], float textures[]) {
+gfx_mesh_load(int countVertices, int countIndices, const float vertices[], const unsigned int indices[], const float colors[], const float textures[]) {
     Mesh m;
 
     glGenVertexArrays(1, &m.vao);
