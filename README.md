@@ -8,3 +8,7 @@ Learning OpenGL for no apparent reason
 * https://glad.dav1d.de/
 * https://github.com/nothings/stb
 * https://github.com/datenwolf/linmath.h
+
+# Astyle
+
+* https://github.com/MaJerle/c-code-style
