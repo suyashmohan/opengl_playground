@@ -5,6 +5,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#define PI      3.14159265358979323846
+
+float degreesToRadians(float angleDegrees);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 GLFWwindow*
@@ -190,6 +193,30 @@ gfx_mesh_free(Mesh m) {
 }
 
 void
+gfx_camera_vp(mat4x4 vp, Camera c) {
+    mat4x4 v, p;
+    mat4x4_perspective(p, degreesToRadians(c.fov), c.aspectRatio, c.near, c.far);
+    mat4x4_look_at(v, c.eye, c.lookat, c.up);
+    mat4x4_mul(vp, p, v);
+}
+
+void
+print_mat4x4(mat4x4 m) {
+    int i, j;
+    for (i = 0; i < 4; ++i) {
+        for (j = 0; j < 4; ++j) {
+            printf("%f ", m[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void
 framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+}
+
+float
+degreesToRadians(float angleDegrees) {
+    return angleDegrees * PI / 180.0;
 }

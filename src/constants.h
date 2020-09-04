@@ -1,8 +1,6 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#define PI      3.14159265358979323846
-
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
