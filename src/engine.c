@@ -148,7 +148,7 @@ gfx_texture_destroy(unsigned int texture) {
 }
 
 Mesh
-gfx_mesh_load(int countVertices, int countIndices, const float vertices[], const unsigned int indices[], const float colors[], const float textures[]) {
+gfx_mesh_load(int countVertices, const float vertices[], const float normals[], const float textures[]) {
     Mesh m;
 
     glGenVertexArrays(1, &m.vao);
@@ -161,10 +161,10 @@ gfx_mesh_load(int countVertices, int countIndices, const float vertices[], const
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 
-    // color attribute
-    glGenBuffers(1, &m.vbo_colors);
-    glBindBuffer(GL_ARRAY_BUFFER, m.vbo_colors);
-    glBufferData(GL_ARRAY_BUFFER, countVertices * 3 * sizeof(float), colors, GL_STATIC_DRAW);
+    // normal attribute
+    glGenBuffers(1, &m.vbo_normals);
+    glBindBuffer(GL_ARRAY_BUFFER, m.vbo_normals);
+    glBufferData(GL_ARRAY_BUFFER, countVertices * 3 * sizeof(float), normals, GL_STATIC_DRAW);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(1);
 
@@ -175,19 +175,13 @@ gfx_mesh_load(int countVertices, int countIndices, const float vertices[], const
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(2);
 
-    // Indices
-    glGenBuffers(1, &m.ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m.ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, countIndices * 3 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
-
     return m;
 }
 
 void
 gfx_mesh_free(Mesh m) {
     glDeleteVertexArrays(1, &m.vao);
-    glDeleteBuffers(1, &m.ebo);
-    glDeleteBuffers(1, &m.vbo_colors);
+    glDeleteBuffers(1, &m.vbo_normals);
     glDeleteBuffers(1, &m.vbo_texture);
     glDeleteBuffers(1, &m.vbo_vertices);
 }

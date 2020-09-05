@@ -9,9 +9,8 @@
 
 typedef struct Mesh {
     unsigned int vao;
-    unsigned int ebo;
     unsigned int vbo_vertices;
-    unsigned int vbo_colors;
+    unsigned int vbo_normals;
     unsigned int vbo_texture;
 } Mesh;
 
@@ -39,7 +38,7 @@ int gfx_shader_uniform_location(int shaderProgram, const char* name);
 unsigned int gfx_texture_load(const char* file);
 void gfx_texture_destroy(unsigned int texture);
 
-Mesh gfx_mesh_load(int countVertices, int countIndices, const float vertices[], const unsigned int indices[], const float colors[], const float textures[]);
+Mesh gfx_mesh_load(int countVertices, const float vertices[], const float normals[], const float textures[]);
 void gfx_mesh_free(Mesh m);
 
 void gfx_camera_vp(mat4x4 vp, Camera c);
