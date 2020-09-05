@@ -11,10 +11,11 @@ const char* vertexShaderSource =
     "layout (location = 2) in vec2 aTexCoord;\n"
     "out vec3 ourColor;\n"
     "out vec2 TexCoord;\n"
-    "uniform mat4 MVP;\n"
+    "uniform mat4 VP;\n"
+    "uniform mat4 M;\n"
     "void main()\n"
     "{\n"
-    "   gl_Position = MVP * vec4(aPos, 1.0);\n"
+    "   gl_Position = VP * M * vec4(aPos, 1.0);\n"
     "   ourColor = aColor;\n"
     "   TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
     "}\0";
