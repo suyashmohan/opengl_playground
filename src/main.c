@@ -53,7 +53,6 @@ main(void) {
     vec3 objectColor =  {1.0f, 0.5f, 0.31f};
     glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, (const GLfloat*)objectColor);
 
-    vec3 ms = {0.5f, 0.5f, 0.5f};
     float shininess = 32.0f;
     glUniform1i(glGetUniformLocation(shaderProgram, "material.diffuse"), 0);
     glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 1);

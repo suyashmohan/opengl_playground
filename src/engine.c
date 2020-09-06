@@ -90,7 +90,7 @@ app_readfile(const char* filePath) {
 }
 
 int
-gfx_shader_compile(GLenum type, char* source) {
+gfx_shader_compile(GLenum type, const char* source) {
     int success;
     char infoLog[512];
 
@@ -107,7 +107,7 @@ gfx_shader_compile(GLenum type, char* source) {
 }
 
 int
-gfx_shader_program(char* vertSrc, char* fragSrc) {
+gfx_shader_program(const char* vertSrc, const char* fragSrc) {
     int success;
     char infoLog[512];
 

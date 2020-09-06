@@ -30,8 +30,8 @@ int app_running(GLFWwindow* window);
 void app_swap_and_poll(GLFWwindow* window);
 char* app_readfile(const char* filePath);
 
-int gfx_shader_compile(GLenum type, char* source);
-int gfx_shader_program(char* vertSrc, char* fragSrc);
+int gfx_shader_compile(GLenum type, const char* source);
+int gfx_shader_program(const char* vertSrc, const char* fragSrc);
 void gfx_shader_destroy(int shaderProgram);
 
 unsigned int gfx_texture_load(const char* file);
