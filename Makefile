@@ -4,10 +4,10 @@ CFLAGS = -Wall -pedantic
 
 SRC=$(wildcard ./src/*.c) $(wildcard ./src/*/*.c)
 
-gl_mac: $(SRC)
-	clang -o $@ $^ $(IDIR) $(LDIR) $(CFLAGS) -lglfw -std=c99
+mingw: $(SRC)
+	gcc -o $@ $^ $(IDIR) $(LDIR) $(CFLAGS) -lglfw3dll -std=c99
 
-gl_win: $(SRC)
+tcc: $(SRC)
 	tcc -o $@.exe $^ $(IDIR) $(LDIR) $(CFLAGS) -lglfw3 -DSTBI_NO_SIMD
 
 astyle:
