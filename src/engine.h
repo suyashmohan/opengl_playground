@@ -28,12 +28,11 @@ GLFWwindow* app_init();
 void app_quit(GLFWwindow* window);
 int app_running(GLFWwindow* window);
 void app_swap_and_poll(GLFWwindow* window);
+char* app_readfile(const char* filePath);
 
-int gfx_shader_compile(GLenum type, const char* source);
-int gfx_shader_program(const char* vertSrc, const char* fragSrc);
+int gfx_shader_compile(GLenum type, char* source);
+int gfx_shader_program(char* vertSrc, char* fragSrc);
 void gfx_shader_destroy(int shaderProgram);
-void gfx_shader_uniform1i(int shaderProgram, const char* name, int val);
-int gfx_shader_uniform_location(int shaderProgram, const char* name);
 
 unsigned int gfx_texture_load(const char* file);
 void gfx_texture_destroy(unsigned int texture);

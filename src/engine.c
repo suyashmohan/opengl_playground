@@ -64,8 +64,33 @@ app_swap_and_poll(GLFWwindow* window) {
     glfwPollEvents();
 }
 
+char*
+app_readfile(const char* filePath) {
+    FILE* fp;
+    long size;
+    char* buffer;
+    size_t result;
+
+    fp = fopen(filePath, "r");
+    if (fp == NULL) {
+        printf("Error opening file: %s", filePath);
+        return NULL;
+    }
+
+    fseek(fp, 0, SEEK_END);
+    size = ftell(fp);
+    rewind(fp);
+
+    buffer = (char*)malloc(sizeof(char) * (size + 1));
+    result = fread(buffer, sizeof(char), size, fp);
+    buffer[result] = '\0';
+
+    fclose(fp);
+    return buffer;
+}
+
 int
-gfx_shader_compile(GLenum type, const char* source) {
+gfx_shader_compile(GLenum type, char* source) {
     int success;
     char infoLog[512];
 
@@ -82,7 +107,7 @@ gfx_shader_compile(GLenum type, const char* source) {
 }
 
 int
-gfx_shader_program(const char* vertSrc, const char* fragSrc) {
+gfx_shader_program(char* vertSrc, char* fragSrc) {
     int success;
     char infoLog[512];
 

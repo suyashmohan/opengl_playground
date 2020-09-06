@@ -13,10 +13,16 @@ main(void) {
     if (window == NULL) {
         return EXIT_FAILURE;
     }
-    int shaderProgram = gfx_shader_program(vertexShaderSource, fragmentShaderSource);
+
+    char* vrtSrc = app_readfile("shader.vs");
+    char* fragSrc = app_readfile("shader.fs");
+    int shaderProgram = gfx_shader_program(vrtSrc, fragSrc);
     if (shaderProgram == 0) {
         return EXIT_FAILURE;
     }
+    free(vrtSrc);
+    free(fragSrc);
+
     unsigned int texture1 = gfx_texture_load("wall.jpg");
     if (texture1 == 0) {
         return EXIT_FAILURE;
