@@ -42,12 +42,13 @@ main(void) {
     // Prepare Shader
     glUseProgram(shaderProgram);
     glUniform1i(glGetUniformLocation(shaderProgram, "texture1"), 0);
-    GLint vp_location = glGetUniformLocation(shaderProgram, "VP");
-    GLint m_location = glGetUniformLocation(shaderProgram, "M");
+
+    GLint vp_location = glGetUniformLocation(shaderProgram, "view_projection");
+    GLint m_location = glGetUniformLocation(shaderProgram, "model");
+    GLint viewPos_location = glGetUniformLocation(shaderProgram, "viewPos");
 
     vec3 objectColor =  {1.0f, 0.5f, 0.31f};
-    GLint object_location = glGetUniformLocation(shaderProgram, "objectColor");
-    GLint viewPos_location = glGetUniformLocation(shaderProgram, "viewPos");
+    glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, (const GLfloat*)objectColor);
 
     vec3 ma = {1.0f, 0.5f, 0.31f};
     vec3 md = {1.0f, 0.5f, 0.31f};
@@ -62,11 +63,11 @@ main(void) {
     vec3 ld =  {0.5f, 0.5f, 0.5f};
     vec3 ls =  {1.0f, 1.0f, 1.0f};
     vec3 lp = {1.5f, 1.5f, 0.5f};
-
     glUniform3fv(glGetUniformLocation(shaderProgram, "light.ambient"), 1, (const GLfloat*)la);
     glUniform3fv(glGetUniformLocation(shaderProgram, "light.diffuse"), 1, (const GLfloat*)ld);
     glUniform3fv(glGetUniformLocation(shaderProgram, "light.specular"), 1, (const GLfloat*)ls);
     glUniform3fv(glGetUniformLocation(shaderProgram, "light.position"), 1, (const GLfloat*)lp);
+
     mat4x4 m, m1, vp;
     mat4x4_identity(m);
     mat4x4_identity(m1);
@@ -88,7 +89,6 @@ main(void) {
         gfx_camera_vp(vp, c);
         glUniformMatrix4fv(vp_location, 1, GL_FALSE, (const GLfloat*)vp);
         glUniformMatrix4fv(m_location, 1, GL_FALSE, (const GLfloat*)m);
-        glUniform3fv(object_location, 1, (const GLfloat*)objectColor);
         glUniform3fv(viewPos_location, 1, (const GLfloat*)c.eye);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
