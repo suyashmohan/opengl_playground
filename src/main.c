@@ -23,8 +23,12 @@ main(void) {
     free(vrtSrc);
     free(fragSrc);
 
-    unsigned int texture1 = gfx_texture_load("wall.jpg");
+    unsigned int texture1 = gfx_texture_load("container.png");
+    unsigned int texture2 = gfx_texture_load("container_specular.png");
     if (texture1 == 0) {
+        return EXIT_FAILURE;
+    }
+    if (texture2 == 0) {
         return EXIT_FAILURE;
     }
 
@@ -41,7 +45,6 @@ main(void) {
 
     // Prepare Shader
     glUseProgram(shaderProgram);
-    glUniform1i(glGetUniformLocation(shaderProgram, "texture1"), 0);
 
     GLint vp_location = glGetUniformLocation(shaderProgram, "view_projection");
     GLint m_location = glGetUniformLocation(shaderProgram, "model");
@@ -50,13 +53,10 @@ main(void) {
     vec3 objectColor =  {1.0f, 0.5f, 0.31f};
     glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, (const GLfloat*)objectColor);
 
-    vec3 ma = {1.0f, 0.5f, 0.31f};
-    vec3 md = {1.0f, 0.5f, 0.31f};
     vec3 ms = {0.5f, 0.5f, 0.5f};
     float shininess = 32.0f;
-    glUniform3fv(glGetUniformLocation(shaderProgram, "material.ambient"), 1, (const GLfloat*)ma);
-    glUniform3fv(glGetUniformLocation(shaderProgram, "material.diffuse"), 1, (const GLfloat*)md);
-    glUniform3fv(glGetUniformLocation(shaderProgram, "material.specular"), 1, (const GLfloat*)ms);
+    glUniform1i(glGetUniformLocation(shaderProgram, "material.diffuse"), 0);
+    glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 1);
     glUniform1f(glGetUniformLocation(shaderProgram, "material.shininess"), shininess);
 
     vec3 la =  {0.2f, 0.2f, 0.2f};
@@ -84,6 +84,8 @@ main(void) {
         glUseProgram(shaderProgram);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture2);
         glBindVertexArray(mesh.vao);
 
         gfx_camera_vp(vp, c);
@@ -99,6 +101,7 @@ main(void) {
 
     gfx_mesh_free(mesh);
     gfx_texture_destroy(texture1);
+    gfx_texture_destroy(texture2);
     gfx_shader_destroy(shaderProgram);
     app_quit(window);
 
