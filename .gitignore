@@ -54,4 +54,4 @@ dkms.conf
 # My customs
 .DS_Store
 .vscode
-gl_mac
+build

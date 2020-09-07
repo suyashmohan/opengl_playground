@@ -14,8 +14,8 @@ main(void) {
         return EXIT_FAILURE;
     }
 
-    char* vrtSrc = app_readfile("shader.vs");
-    char* fragSrc = app_readfile("shader.fs");
+    char* vrtSrc = app_readfile("assets/shader.vs");
+    char* fragSrc = app_readfile("assets/shader.fs");
     int shaderProgram = gfx_shader_program(vrtSrc, fragSrc);
     if (shaderProgram == 0) {
         return EXIT_FAILURE;
@@ -23,8 +23,8 @@ main(void) {
     free(vrtSrc);
     free(fragSrc);
 
-    unsigned int texture1 = gfx_texture_load("container.png");
-    unsigned int texture2 = gfx_texture_load("container_specular.png");
+    unsigned int texture1 = gfx_texture_load("assets/container.png");
+    unsigned int texture2 = gfx_texture_load("assets/container_specular.png");
     if (texture1 == 0) {
         return EXIT_FAILURE;
     }
