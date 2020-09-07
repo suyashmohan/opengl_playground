@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-void processInput(GLFWwindow* window, Camera* c, mat4x4 m);
+void processInput(GLFWwindow* window, Camera* c, float *m);
 
 #include "constants.h"
 
@@ -40,7 +40,8 @@ main(void) {
         45.0f,
         0.1,
         100.0f,
-        (float)(SCR_WIDTH / SCR_HEIGHT),
+        SCR_WIDTH,
+        SCR_HEIGHT,
     };
 
     // Prepare Shader
@@ -50,27 +51,26 @@ main(void) {
     GLint m_location = glGetUniformLocation(shaderProgram, "model");
     GLint viewPos_location = glGetUniformLocation(shaderProgram, "viewPos");
 
-    vec3 objectColor =  {1.0f, 0.5f, 0.31f};
-    glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, (const GLfloat*)objectColor);
+    struct vec3 objectColor =  {1.0f, 0.5f, 0.31f};
+    glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, (const GLfloat*)&objectColor);
 
     float shininess = 32.0f;
     glUniform1i(glGetUniformLocation(shaderProgram, "material.diffuse"), 0);
     glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 1);
     glUniform1f(glGetUniformLocation(shaderProgram, "material.shininess"), shininess);
 
-    vec3 la =  {0.2f, 0.2f, 0.2f};
-    vec3 ld =  {0.5f, 0.5f, 0.5f};
-    vec3 ls =  {1.0f, 1.0f, 1.0f};
-    vec3 lp = {1.5f, 1.5f, 0.5f};
-    glUniform3fv(glGetUniformLocation(shaderProgram, "light.ambient"), 1, (const GLfloat*)la);
-    glUniform3fv(glGetUniformLocation(shaderProgram, "light.diffuse"), 1, (const GLfloat*)ld);
-    glUniform3fv(glGetUniformLocation(shaderProgram, "light.specular"), 1, (const GLfloat*)ls);
-    glUniform3fv(glGetUniformLocation(shaderProgram, "light.position"), 1, (const GLfloat*)lp);
+    struct vec3 la =  {0.2f, 0.2f, 0.2f};
+    struct vec3 ld =  {0.5f, 0.5f, 0.5f};
+    struct vec3 ls =  {1.0f, 1.0f, 1.0f};
+    struct vec3 lp = {1.5f, 1.5f, 0.5f};
+    glUniform3fv(glGetUniformLocation(shaderProgram, "light.ambient"), 1, (const GLfloat*)&la);
+    glUniform3fv(glGetUniformLocation(shaderProgram, "light.diffuse"), 1, (const GLfloat*)&ld);
+    glUniform3fv(glGetUniformLocation(shaderProgram, "light.specular"), 1, (const GLfloat*)&ls);
+    glUniform3fv(glGetUniformLocation(shaderProgram, "light.position"), 1, (const GLfloat*)&lp);
 
-    mat4x4 m, m1, vp;
-    mat4x4_identity(m);
-    mat4x4_identity(m1);
-    mat4x4_translate(m1, 1.5f, 1.5f, 0.5f);
+    mfloat_t m[MAT4_SIZE];
+    mfloat_t vp[MAT4_SIZE];
+    mat4_identity(m);
 
     while (app_running(window)) {
         processInput(window, &c, m);
@@ -88,9 +88,9 @@ main(void) {
         glBindVertexArray(mesh.vao);
 
         gfx_camera_vp(vp, c);
-        glUniformMatrix4fv(vp_location, 1, GL_FALSE, (const GLfloat*)vp);
-        glUniformMatrix4fv(m_location, 1, GL_FALSE, (const GLfloat*)m);
-        glUniform3fv(viewPos_location, 1, (const GLfloat*)c.eye);
+        glUniformMatrix4fv(vp_location, 1, GL_FALSE, (const GLfloat*)&vp);
+        glUniformMatrix4fv(m_location, 1, GL_FALSE, (const GLfloat*)&m);
+        glUniform3fv(viewPos_location, 1, (const GLfloat*)&c.eye);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
         // Render End
@@ -108,7 +108,11 @@ main(void) {
 }
 
 void
-processInput(GLFWwindow* window, Camera* c, mat4x4 m) {
+processInput(GLFWwindow* window, Camera* c, float *m) {
+    float angle = 1.0f;
+    mfloat_t r[MAT4_SIZE];
+    mat4_identity(r);
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     } else if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
@@ -117,12 +121,16 @@ processInput(GLFWwindow* window, Camera* c, mat4x4 m) {
     } else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
         c->eye[2] += 0.05;
     } else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        mat4x4_rotate_X(m, m, 0.05);
+        mat4_rotation_x(r, to_radians(-angle));
+        mat4_multiply(m, m, r);
     } else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        mat4x4_rotate_X(m, m, -0.05);
+        mat4_rotation_x(r, to_radians(angle));
+        mat4_multiply(m, m, r);
     } else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        mat4x4_rotate_Y(m, m, 0.05);
+        mat4_rotation_y(r, to_radians(-angle));
+        mat4_multiply(m, m, r);
     } else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        mat4x4_rotate_Y(m, m, -0.05);
+        mat4_rotation_y(r, to_radians(angle));
+        mat4_multiply(m, m, r);
     }
 }

@@ -5,7 +5,7 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include <linmath.h>
+#include <mathc.h>
 
 typedef struct Mesh {
     unsigned int vao;
@@ -15,13 +15,14 @@ typedef struct Mesh {
 } Mesh;
 
 typedef struct Camera {
-    vec3 eye;
-    vec3 lookat;
-    vec3 up;
+    mfloat_t eye[VEC3_SIZE];
+    mfloat_t lookat[VEC3_SIZE];
+    mfloat_t up[VEC3_SIZE];
     float fov;
     float near;
     float far;
-    float aspectRatio;
+    float width;
+    float height;
 } Camera;
 
 GLFWwindow* app_init();
@@ -40,8 +41,6 @@ void gfx_texture_destroy(unsigned int texture);
 Mesh gfx_mesh_load(int countVertices, const float vertices[], const float normals[], const float textures[]);
 void gfx_mesh_free(Mesh m);
 
-void gfx_camera_vp(mat4x4 vp, Camera c);
-
-void print_mat4x4(mat4x4 m);
+void gfx_camera_vp(mfloat_t *vp, Camera c);
 
 #endif
