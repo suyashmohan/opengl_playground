@@ -15,9 +15,9 @@ typedef struct Mesh {
 } Mesh;
 
 typedef struct Camera {
-    float_t eye[VEC3_SIZE];
-    float_t lookat[VEC3_SIZE];
-    float_t up[VEC3_SIZE];
+    float eye[VEC3_SIZE];
+    float lookat[VEC3_SIZE];
+    float up[VEC3_SIZE];
     float fov;
     float near;
     float far;
@@ -41,6 +41,6 @@ void gfx_texture_destroy(unsigned int texture);
 Mesh gfx_mesh_load(int countVertices, const float vertices[], const float normals[], const float textures[]);
 void gfx_mesh_free(Mesh m);
 
-void gfx_camera_vp(float_t *vp, Camera c);
+void gfx_camera_vp(float *vp, Camera c);
 
 #endif

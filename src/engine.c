@@ -209,9 +209,9 @@ gfx_mesh_free(Mesh m) {
 }
 
 void
-gfx_camera_vp(float_t *vp, Camera c){
-    float_t v[MAT4_SIZE];
-    float_t p[MAT4_SIZE];
+gfx_camera_vp(float *vp, Camera c){
+    float v[MAT4_SIZE];
+    float p[MAT4_SIZE];
 
     mat4_look_at(v, c.eye, c.lookat, c.up);
     mat4_perspective_fov(p, c.fov, c.width, c.height, c.near, c.far);

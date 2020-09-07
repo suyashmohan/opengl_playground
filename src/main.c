@@ -51,7 +51,7 @@ main(void) {
     GLint m_location = glGetUniformLocation(shaderProgram, "model");
     GLint viewPos_location = glGetUniformLocation(shaderProgram, "viewPos");
 
-    struct vec3 objectColor =  {1.0f, 0.5f, 0.31f};
+    float objectColor[VEC3_SIZE] = {1.0f, 0.5f, 0.31f};
     glUniform3fv(glGetUniformLocation(shaderProgram, "objectColor"), 1, (const GLfloat*)&objectColor);
 
     float shininess = 32.0f;
@@ -59,17 +59,17 @@ main(void) {
     glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 1);
     glUniform1f(glGetUniformLocation(shaderProgram, "material.shininess"), shininess);
 
-    struct vec3 la =  {0.2f, 0.2f, 0.2f};
-    struct vec3 ld =  {0.5f, 0.5f, 0.5f};
-    struct vec3 ls =  {1.0f, 1.0f, 1.0f};
-    struct vec3 lp = {1.5f, 1.5f, 0.5f};
+    float la[VEC3_SIZE] = {0.2f, 0.2f, 0.2f};
+    float ld[VEC3_SIZE] = {0.5f, 0.5f, 0.5f};
+    float ls[VEC3_SIZE] = {1.0f, 1.0f, 1.0f};
+    float lp[VEC3_SIZE] = {1.5f, 1.5f, 0.5f};
     glUniform3fv(glGetUniformLocation(shaderProgram, "light.ambient"), 1, (const GLfloat*)&la);
     glUniform3fv(glGetUniformLocation(shaderProgram, "light.diffuse"), 1, (const GLfloat*)&ld);
     glUniform3fv(glGetUniformLocation(shaderProgram, "light.specular"), 1, (const GLfloat*)&ls);
     glUniform3fv(glGetUniformLocation(shaderProgram, "light.position"), 1, (const GLfloat*)&lp);
 
-    float_t m[MAT4_SIZE];
-    float_t vp[MAT4_SIZE];
+    float m[MAT4_SIZE];
+    float vp[MAT4_SIZE];
     mat4_identity(m);
 
     while (app_running(window)) {
@@ -110,7 +110,7 @@ main(void) {
 void
 processInput(GLFWwindow* window, Camera* c, float *m) {
     float angle = 1.0f;
-    float_t r[MAT4_SIZE];
+    float r[MAT4_SIZE];
     mat4_identity(r);
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
