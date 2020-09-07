@@ -68,8 +68,8 @@ main(void) {
     glUniform3fv(glGetUniformLocation(shaderProgram, "light.specular"), 1, (const GLfloat*)&ls);
     glUniform3fv(glGetUniformLocation(shaderProgram, "light.position"), 1, (const GLfloat*)&lp);
 
-    mfloat_t m[MAT4_SIZE];
-    mfloat_t vp[MAT4_SIZE];
+    float_t m[MAT4_SIZE];
+    float_t vp[MAT4_SIZE];
     mat4_identity(m);
 
     while (app_running(window)) {
@@ -110,7 +110,7 @@ main(void) {
 void
 processInput(GLFWwindow* window, Camera* c, float *m) {
     float angle = 1.0f;
-    mfloat_t r[MAT4_SIZE];
+    float_t r[MAT4_SIZE];
     mat4_identity(r);
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
