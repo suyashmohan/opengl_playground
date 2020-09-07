@@ -15,8 +15,8 @@ typedef struct Mesh {
 } Mesh;
 
 typedef struct Camera {
-    float eye[VEC3_SIZE];
-    float lookat[VEC3_SIZE];
+    float position[VEC3_SIZE];
+    float target[VEC3_SIZE];
     float up[VEC3_SIZE];
     float fov;
     float near;

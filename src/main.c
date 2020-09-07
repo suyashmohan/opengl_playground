@@ -34,7 +34,7 @@ main(void) {
 
     Mesh mesh = gfx_mesh_load(36, vertices, normals, textcoords);
     Camera c = {
-        {0.0f, 0.0f, 5.0f},
+        {0.0f, 0.0f, 3.0f},
         {0, 0, 0},
         {0.0f, 1.0f, 0.0},
         45.0f,
@@ -90,7 +90,7 @@ main(void) {
         gfx_camera_vp(vp, c);
         glUniformMatrix4fv(vp_location, 1, GL_FALSE, (const GLfloat*)&vp);
         glUniformMatrix4fv(m_location, 1, GL_FALSE, (const GLfloat*)&m);
-        glUniform3fv(viewPos_location, 1, (const GLfloat*)&c.eye);
+        glUniform3fv(viewPos_location, 1, (const GLfloat*)&c.position);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
         // Render End
@@ -116,10 +116,10 @@ processInput(GLFWwindow* window, Camera* c, float *m) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     } else if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-        if (c->eye[2] > 0)
-        { c->eye[2] -= 0.05; }
+        if (c->position[2] > 0)
+        { c->position[2] -= 0.05; }
     } else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-        c->eye[2] += 0.05;
+        c->position[2] += 0.05;
     } else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         mat4_rotation_x(r, to_radians(-angle));
         mat4_multiply(m, m, r);
