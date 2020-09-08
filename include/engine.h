@@ -41,6 +41,6 @@ void gfx_texture_destroy(unsigned int texture);
 Mesh gfx_mesh_load(int countVertices, const float vertices[], const float normals[], const float textures[]);
 void gfx_mesh_free(Mesh m);
 
-void gfx_camera_vp(float *vp, Camera c);
+void gfx_camera_vp(float *v, float *p, Camera c);
 
 #endif
