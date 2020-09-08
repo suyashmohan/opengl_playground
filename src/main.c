@@ -62,11 +62,11 @@ main(void) {
     float la[VEC3_SIZE] = {0.2f, 0.2f, 0.2f};
     float ld[VEC3_SIZE] = {0.5f, 0.5f, 0.5f};
     float ls[VEC3_SIZE] = {1.0f, 1.0f, 1.0f};
-    float lp[VEC3_SIZE] = {1.5f, 1.5f, 0.5f};
+    float ldir[VEC3_SIZE] = {-0.2f, -1.0f, -0.3f};
     glUniform3fv(glGetUniformLocation(shaderProgram, "light.ambient"), 1, (const GLfloat*)&la);
     glUniform3fv(glGetUniformLocation(shaderProgram, "light.diffuse"), 1, (const GLfloat*)&ld);
     glUniform3fv(glGetUniformLocation(shaderProgram, "light.specular"), 1, (const GLfloat*)&ls);
-    glUniform3fv(glGetUniformLocation(shaderProgram, "light.position"), 1, (const GLfloat*)&lp);
+    glUniform3fv(glGetUniformLocation(shaderProgram, "light.direction"), 1, (const GLfloat*)&ldir);
 
     float m[MAT4_SIZE];
     float vp[MAT4_SIZE];
