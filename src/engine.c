@@ -12,7 +12,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 GLFWwindow *app_init(int width, int height) {
   if (!glfwInit()) {
     printf("Unable to init glfw");
-    return NULL;
+    exit(EXIT_FAILURE);
   }
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -27,7 +27,7 @@ GLFWwindow *app_init(int width, int height) {
   if (window == NULL) {
     printf("Unable to create window");
     glfwTerminate();
-    return NULL;
+    exit(EXIT_FAILURE);
   }
 
   glfwMakeContextCurrent(window);
@@ -35,7 +35,7 @@ GLFWwindow *app_init(int width, int height) {
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     printf("Unabel to load OpenGL");
-    return NULL;
+    exit(EXIT_FAILURE);
   }
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);

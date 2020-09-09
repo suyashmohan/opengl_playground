@@ -11,14 +11,10 @@ void draw(GLuint shaderProgram, GLuint texture1, GLuint texture2, Mesh mesh,
 
 int main(void) {
   GLFWwindow *window = app_init(SCR_WIDTH, SCR_HEIGHT);
-  if (window == NULL) {
-    return EXIT_FAILURE;
-  }
 
   Material mat = gfx_material_create("assets/shader.vs", "assets/shader.fs", 2,
                                      "assets/container.png",
                                      "assets/container_specular.png");
-
   Mesh mesh = gfx_mesh_load(36, vertices, normals, textcoords);
   Camera c = {
       {0.0f, 0.0f, 5.0f}, {0, 0, 0},  {0.0f, 1.0f, 0.0}, 45.0f, 0.1, 100.0f,
