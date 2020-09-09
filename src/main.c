@@ -15,23 +15,9 @@ main(void) {
         return EXIT_FAILURE;
     }
 
-    char* vrtSrc = app_readfile("assets/shader.vs");
-    char* fragSrc = app_readfile("assets/shader.fs");
-    int shaderProgram = gfx_shader_program(vrtSrc, fragSrc);
-    if (shaderProgram == 0) {
-        return EXIT_FAILURE;
-    }
-    free(vrtSrc);
-    free(fragSrc);
-
-    unsigned int texture1 = gfx_texture_load("assets/container.png");
-    unsigned int texture2 = gfx_texture_load("assets/container_specular.png");
-    if (texture1 == 0) {
-        return EXIT_FAILURE;
-    }
-    if (texture2 == 0) {
-        return EXIT_FAILURE;
-    }
+    Material mat= gfx_material_create(
+            "assets/shader.vs", "assets/shader.fs",
+            2, "assets/container.png", "assets/container_specular.png");
 
     Mesh mesh = gfx_mesh_load(36, vertices, normals, textcoords);
     Camera c = {
@@ -46,21 +32,21 @@ main(void) {
     };
 
     // Prepare Shader
-    glUseProgram(shaderProgram);
+    glUseProgram(mat.shader);
 
     float shininess = 32.0f;
-    glUniform1i(glGetUniformLocation(shaderProgram, "material.diffuse"), 0);
-    glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 1);
-    glUniform1f(glGetUniformLocation(shaderProgram, "material.shininess"), shininess);
+    glUniform1i(glGetUniformLocation(mat.shader, "material.diffuse"), 0);
+    glUniform1i(glGetUniformLocation(mat.shader, "material.specular"), 1);
+    glUniform1f(glGetUniformLocation(mat.shader, "material.shininess"), shininess);
 
     float la[VEC3_SIZE] = {0.2f, 0.2f, 0.2f};
     float ld[VEC3_SIZE] = {0.5f, 0.5f, 0.5f};
     float ls[VEC3_SIZE] = {1.0f, 1.0f, 1.0f};
     float ldir[VEC3_SIZE] = {-0.2f, -1.0f, -0.3f};
-    glUniform3fv(glGetUniformLocation(shaderProgram, "light.ambient"), 1, (const GLfloat*)&la);
-    glUniform3fv(glGetUniformLocation(shaderProgram, "light.diffuse"), 1, (const GLfloat*)&ld);
-    glUniform3fv(glGetUniformLocation(shaderProgram, "light.specular"), 1, (const GLfloat*)&ls);
-    glUniform3fv(glGetUniformLocation(shaderProgram, "light.direction"), 1, (const GLfloat*)&ldir);
+    glUniform3fv(glGetUniformLocation(mat.shader, "light.ambient"), 1, (const GLfloat*)&la);
+    glUniform3fv(glGetUniformLocation(mat.shader, "light.diffuse"), 1, (const GLfloat*)&ld);
+    glUniform3fv(glGetUniformLocation(mat.shader, "light.specular"), 1, (const GLfloat*)&ls);
+    glUniform3fv(glGetUniformLocation(mat.shader, "light.direction"), 1, (const GLfloat*)&ldir);
 
     float m[MAT4_SIZE];
     float m1[MAT4_SIZE];
@@ -93,19 +79,17 @@ main(void) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Render Begin
-        draw(shaderProgram, texture1, texture2, mesh,  c, m);
-        draw(shaderProgram, texture1, texture2, mesh,  c, m1);
-        draw(shaderProgram, texture1, texture2, mesh,  c, m2);
-        draw(shaderProgram, texture1, texture2, mesh,  c, m3);
+        draw(mat.shader, mat.textures[0], mat.textures[1], mesh,  c, m);
+        draw(mat.shader, mat.textures[0], mat.textures[1], mesh,  c, m1);
+        draw(mat.shader, mat.textures[0], mat.textures[1], mesh,  c, m2);
+        draw(mat.shader, mat.textures[0], mat.textures[1], mesh,  c, m3);
         // Render End
 
         app_swap_and_poll(window);
     }
 
+    gfx_material_destroy(mat);
     gfx_mesh_free(mesh);
-    gfx_texture_destroy(texture1);
-    gfx_texture_destroy(texture2);
-    gfx_shader_destroy(shaderProgram);
     app_quit(window);
 
     return EXIT_SUCCESS;

@@ -4,6 +4,8 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -206,6 +208,49 @@ gfx_mesh_free(Mesh m) {
     glDeleteBuffers(1, &m.vbo_normals);
     glDeleteBuffers(1, &m.vbo_texture);
     glDeleteBuffers(1, &m.vbo_vertices);
+}
+
+Material
+gfx_material_create(const char* vrtSrcPath, const char *fragSrcPath, int textureCount, const char *textures, ...) {
+    Material mat;
+
+    char* vrtSrc = app_readfile(vrtSrcPath);
+    char* fragSrc = app_readfile(fragSrcPath);
+    mat.shader = gfx_shader_program(vrtSrc, fragSrc);
+    free(vrtSrc);
+    free(fragSrc);
+
+    if (mat.shader == 0){
+        exit(EXIT_FAILURE);
+    }
+
+    mat.textureCount = textureCount;
+    mat.textures = NULL;
+    if (textureCount > 0){
+        mat.textures = malloc(sizeof(int));
+        va_list args;
+        va_start(args, textures);
+        for(int i=0; i<mat.textureCount; i++) {
+            unsigned int tex = gfx_texture_load(textures);
+            if (tex == 0) {
+                exit(EXIT_FAILURE);
+            }
+            mat.textures[i] = tex;
+            textures = va_arg(args, const char *);
+        }
+        va_end(args);
+    }
+    return mat;
+}
+
+void
+gfx_material_destroy(Material mat) {
+    gfx_shader_destroy(mat.shader);
+    if (mat.textureCount > 0) {
+        for(int i=0; i < mat.textureCount; ++i) {
+           gfx_texture_destroy(mat.textures[i]); 
+        }
+    }
 }
 
 void
