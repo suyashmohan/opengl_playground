@@ -8,46 +8,48 @@
 #include <mathc.h>
 
 typedef struct Mesh {
-    unsigned int vao;
-    unsigned int vbo_vertices;
-    unsigned int vbo_normals;
-    unsigned int vbo_texture;
+  unsigned int vao;
+  unsigned int vbo_vertices;
+  unsigned int vbo_normals;
+  unsigned int vbo_texture;
 } Mesh;
 
 typedef struct Material {
-    int shader;
-    int textureCount;
-    int *textures;
+  int shader;
+  int textureCount;
+  int *textures;
 } Material;
 
 typedef struct Camera {
-    float position[VEC3_SIZE];
-    float target[VEC3_SIZE];
-    float up[VEC3_SIZE];
-    float fov;
-    float near;
-    float far;
-    float width;
-    float height;
+  float position[VEC3_SIZE];
+  float target[VEC3_SIZE];
+  float up[VEC3_SIZE];
+  float fov;
+  float near;
+  float far;
+  float width;
+  float height;
 } Camera;
 
-GLFWwindow* app_init();
-void app_quit(GLFWwindow* window);
-int app_running(GLFWwindow* window);
-void app_swap_and_poll(GLFWwindow* window);
-char* app_readfile(const char* filePath);
+GLFWwindow *app_init();
+void app_quit(GLFWwindow *window);
+int app_running(GLFWwindow *window);
+void app_swap_and_poll(GLFWwindow *window);
+char *app_readfile(const char *filePath);
 
-int gfx_shader_compile(GLenum type, const char* source);
-int gfx_shader_program(const char* vertSrc, const char* fragSrc);
+int gfx_shader_compile(GLenum type, const char *source);
+int gfx_shader_program(const char *vertSrc, const char *fragSrc);
 void gfx_shader_destroy(int shaderProgram);
 
-unsigned int gfx_texture_load(const char* file);
+unsigned int gfx_texture_load(const char *file);
 void gfx_texture_destroy(unsigned int texture);
 
-Mesh gfx_mesh_load(int countVertices, const float vertices[], const float normals[], const float textures[]);
+Mesh gfx_mesh_load(int countVertices, const float vertices[],
+                   const float normals[], const float textures[]);
 void gfx_mesh_free(Mesh m);
 
-Material gfx_material_create(const char* vrtSrcPath, const char *fragSrcPath, int textureCount, const char *textures, ...);
+Material gfx_material_create(const char *vrtSrcPath, const char *fragSrcPath,
+                             int textureCount, const char *textures, ...);
 void gfx_material_destroy(Material mat);
 
 void gfx_camera_vp(float *v, float *p, Camera c);
