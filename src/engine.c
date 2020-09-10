@@ -162,6 +162,7 @@ void gfx_texture_destroy(unsigned int texture) {
 Mesh gfx_mesh_load(int countVertices, const float vertices[],
                    const float normals[], const float textures[]) {
   Mesh m;
+  m.verticesCount = countVertices;
 
   glGenVertexArrays(1, &m.vao);
   glBindVertexArray(m.vao);
@@ -240,6 +241,27 @@ void gfx_material_destroy(Material mat) {
       gfx_texture_destroy(mat.textures[i]);
     }
   }
+}
+
+void gfx_material_use(Material mat) {
+  glUseProgram(mat.shader);
+  for (int i = 0; i < mat.textureCount; i++) {
+    glActiveTexture(GL_TEXTURE0 + i);
+    glBindTexture(GL_TEXTURE_2D, mat.textures[i]);
+  }
+}
+
+void gfx_model_mat4(float *m, Model model) {
+  mat4_identity(m);
+  mat4_rotation_x(m, to_radians(model.rotation[0]));
+  mat4_rotation_y(m, to_radians(model.rotation[1]));
+  mat4_rotation_z(m, to_radians(model.rotation[2]));
+  mat4_translate(m, m, model.position);
+}
+
+void gfx_model_draw(Model model) {
+  glBindVertexArray(model.mesh.vao);
+  glDrawArrays(GL_TRIANGLES, 0, model.mesh.verticesCount);
 }
 
 void gfx_camera_vp(float *v, float *p, Camera c) {

@@ -12,7 +12,14 @@ typedef struct Mesh {
   unsigned int vbo_vertices;
   unsigned int vbo_normals;
   unsigned int vbo_texture;
+  int verticesCount;
 } Mesh;
+
+typedef struct Model {
+  Mesh mesh;
+  float position[VEC3_SIZE];
+  float rotation[VEC3_SIZE];
+} Model;
 
 typedef struct Material {
   int shader;
@@ -51,6 +58,10 @@ void gfx_mesh_free(Mesh m);
 Material gfx_material_create(const char *vrtSrcPath, const char *fragSrcPath,
                              int textureCount, const char *textures, ...);
 void gfx_material_destroy(Material mat);
+void gfx_material_use(Material mat);
+
+void gfx_model_mat4(float *m, Model model);
+void gfx_model_draw(Model model);
 
 void gfx_camera_vp(float *v, float *p, Camera c);
 
