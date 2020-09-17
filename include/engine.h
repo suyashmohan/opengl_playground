@@ -3,8 +3,8 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
 #include <cglm/cglm.h>
+#include <glad/glad.h>
 
 typedef struct Mesh {
   unsigned int vao;

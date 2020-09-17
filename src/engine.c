@@ -268,7 +268,7 @@ void gfx_model_draw(Model model) {
   glDrawArrays(GL_TRIANGLES, 0, model.mesh.verticesCount);
 }
 
-void gfx_camera_vp(mat4 v, mat4 p, Camera c){
+void gfx_camera_vp(mat4 v, mat4 p, Camera c) {
   glm_lookat(c.position, c.target, c.up, v);
   glm_perspective(c.fov, c.width / c.height, c.near, c.far, p);
 }
