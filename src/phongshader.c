@@ -40,8 +40,8 @@ void phongshader_set_light(PhongShader *shader, float *ambient, float *diffuse,
   glUniform3fv(shader->location.light_direction, 1, (const GLfloat *)direction);
 }
 
-void phongshader_set_pvm(PhongShader *shader, float *p, float *v, float *m,
-                         float *pos) {
+void phongshader_set_pvm(PhongShader *shader, mat4 p, mat4 v, mat4 m,
+                         vec3 pos) {
   glUniformMatrix4fv(shader->location.view, 1, GL_FALSE, (const GLfloat *)v);
   glUniformMatrix4fv(shader->location.projection, 1, GL_FALSE,
                      (const GLfloat *)p);

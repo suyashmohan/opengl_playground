@@ -22,5 +22,5 @@ void phongshader_set_material(PhongShader *shader, int diffuseTex,
                               int specularTex, float shininess);
 void phongshader_set_light(PhongShader *shader, float *ambient, float *diffuse,
                            float *specular, float *direction);
-void phongshader_set_pvm(PhongShader *shader, float *p, float *v, float *m,
-                         float *pos);
+void phongshader_set_pvm(PhongShader *shader, mat4 p, mat4 v, mat4 m,
+                         vec3 pos);

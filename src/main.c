@@ -1,20 +1,20 @@
-#include "engine.h"
-
-#include <mathc.h>
+#include <cglm/types.h>
+#include <cglm/util.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
 #include "constants.h"
+#include "engine.h"
 #include "phongshader.h"
 
 void processInput(GLFWwindow *window, Camera *c);
 void draw(PhongShader shader, Model model, Camera c);
 
 int main(void) {
-  float la[VEC3_SIZE] = {0.5f, 0.5f, 0.5f};
-  float ld[VEC3_SIZE] = {0.8f, 0.8f, 0.8f};
-  float ls[VEC3_SIZE] = {1.0f, 1.0f, 1.0f};
-  float ldir[VEC3_SIZE] = {-0.2f, -1.0f, -0.3f};
+  vec3 la = {0.5f, 0.5f, 0.5f};
+  vec3 ld = {0.8f, 0.8f, 0.8f};
+  vec3 ls = {1.0f, 1.0f, 1.0f};
+  vec3 ldir = {-0.2f, -1.0f, -0.3f};
 
   GLFWwindow *window = app_init(SCR_WIDTH, SCR_HEIGHT);
   Material mat = gfx_material_create("assets/shader.vs", "assets/shader.fs", 2,
@@ -23,7 +23,7 @@ int main(void) {
   Mesh mesh = gfx_mesh_load(36, vertices, normals, textcoords);
   Camera c = {
       {0.0f, 0.0f, 5.0f}, {0, 0, 0},  {0.0f, 1.0f, 0.0},
-      to_radians(50.0f),  0.1,        100.0f,
+      glm_rad(50.0f),     0.1,        100.0f,
       SCR_WIDTH,          SCR_HEIGHT,
   };
   PhongShader shader;
@@ -39,8 +39,13 @@ int main(void) {
   Model cube3 = {mesh, {1.0f, -2.0f, 1.0f}, {0.0f, 0.0f, 50.0f}};
   Model cube4 = {mesh, {-2.0f, 1.0f, -2.0f}, {0.0f, 50.0f, 50.0f}};
 
+  float angle = 0.0f;
+  float step = 0.5f;
   while (app_running(window)) {
     processInput(window, &c);
+    cube1.rotation[0] += step;
+    cube1.rotation[1] += step / 2.0f;
+    cube1.rotation[2] += step / 3.0f;
 
     // Clear the Screen
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -64,9 +69,9 @@ int main(void) {
 }
 
 void draw(PhongShader shader, Model model, Camera c) {
-  float p[MAT4_SIZE];
-  float v[MAT4_SIZE];
-  float m[MAT4_SIZE];
+  mat4 p;
+  mat4 v;
+  mat4 m;
 
   gfx_camera_vp(v, p, c);
   gfx_model_mat4(m, model);

@@ -1,11 +1,10 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include <glad/glad.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#define MATHC_FLOATING_POINT_TYPE float
-#include <mathc.h>
+#include <glad/glad.h>
+#include <cglm/cglm.h>
 
 typedef struct Mesh {
   unsigned int vao;
@@ -17,8 +16,8 @@ typedef struct Mesh {
 
 typedef struct Model {
   Mesh mesh;
-  float position[VEC3_SIZE];
-  float rotation[VEC3_SIZE];
+  vec3 position;
+  vec3 rotation;
 } Model;
 
 typedef struct Material {
@@ -28,9 +27,9 @@ typedef struct Material {
 } Material;
 
 typedef struct Camera {
-  float position[VEC3_SIZE];
-  float target[VEC3_SIZE];
-  float up[VEC3_SIZE];
+  vec3 position;
+  vec3 target;
+  vec3 up;
   float fov;
   float near;
   float far;
@@ -60,9 +59,9 @@ Material gfx_material_create(const char *vrtSrcPath, const char *fragSrcPath,
 void gfx_material_destroy(Material mat);
 void gfx_material_use(Material mat);
 
-void gfx_model_mat4(float *m, Model model);
+void gfx_model_mat4(mat4 m, Model model);
 void gfx_model_draw(Model model);
 
-void gfx_camera_vp(float *v, float *p, Camera c);
+void gfx_camera_vp(mat4 v, mat4 p, Camera c);
 
 #endif

@@ -1,4 +1,8 @@
 #include "engine.h"
+#include <cglm/affine.h>
+#include <cglm/cam.h>
+#include <cglm/mat4.h>
+#include <cglm/util.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
@@ -251,12 +255,12 @@ void gfx_material_use(Material mat) {
   }
 }
 
-void gfx_model_mat4(float *m, Model model) {
-  mat4_identity(m);
-  mat4_rotation_x(m, to_radians(model.rotation[0]));
-  mat4_rotation_y(m, to_radians(model.rotation[1]));
-  mat4_rotation_z(m, to_radians(model.rotation[2]));
-  mat4_translate(m, m, model.position);
+void gfx_model_mat4(mat4 m, Model model) {
+  glm_mat4_identity(m);
+  glm_translate(m, model.position);
+  glm_rotate_x(m, glm_rad(model.rotation[0]), m);
+  glm_rotate_y(m, glm_rad(model.rotation[1]), m);
+  glm_rotate_z(m, glm_rad(model.rotation[2]), m);
 }
 
 void gfx_model_draw(Model model) {
@@ -264,9 +268,9 @@ void gfx_model_draw(Model model) {
   glDrawArrays(GL_TRIANGLES, 0, model.mesh.verticesCount);
 }
 
-void gfx_camera_vp(float *v, float *p, Camera c) {
-  mat4_look_at(v, c.position, c.target, c.up);
-  mat4_perspective_fov(p, c.fov, c.width, c.height, c.near, c.far);
+void gfx_camera_vp(mat4 v, mat4 p, Camera c){
+  glm_lookat(c.position, c.target, c.up, v);
+  glm_perspective(c.fov, c.width / c.height, c.near, c.far, p);
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
