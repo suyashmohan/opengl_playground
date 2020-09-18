@@ -43,6 +43,10 @@ GLFWwindow *app_init(int width, int height) {
   }
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_CULL_FACE);
+  glFrontFace(GL_CCW);
 
   printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
 
@@ -150,7 +154,7 @@ unsigned int gfx_texture_load(const char *file) {
     printf("Unabel to load image: %s\n", file);
     return 0;
   }
-  printf("Image Loaded : %s - %dx%d\n", file, imgW, imgH);
+  printf("Image Loaded : %s - %dx%d [%d]\n", file, imgW, imgH, nrChannels);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgW, imgH, 0, GL_RGBA,
                GL_UNSIGNED_BYTE, data);
   glGenerateMipmap(GL_TEXTURE_2D);
