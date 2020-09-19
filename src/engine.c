@@ -168,6 +168,8 @@ Geometry geometry_load_obj(const char *filepath) {
     printf("Unable to load OBJ file: %s\n", filepath);
     exit(EXIT_FAILURE);
   }
+  printf("Wavefront OBJ Loaded : %s - %d faces\n", filepath,
+         objMesh->face_count);
   obj.faceCount = objMesh->face_count;
   obj.vertices = malloc(sizeof(float) * 3 * 3 * obj.faceCount);
   obj.texcoords = malloc(sizeof(float) * 2 * 3 * obj.faceCount);
@@ -272,7 +274,8 @@ unsigned int texture_load(const char *file) {
     printf("Unabel to load image: %s\n", file);
     return 0;
   }
-  printf("Image Loaded : %s - %dx%d [%d]\n", file, imgW, imgH, nrChannels);
+  printf("Image Loaded : %s - %dx%d [%d bits]\n", file, imgW, imgH,
+         nrChannels * 8);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgW, imgH, 0, GL_RGBA,
                GL_UNSIGNED_BYTE, data);
   glGenerateMipmap(GL_TEXTURE_2D);

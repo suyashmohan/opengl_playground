@@ -60,17 +60,17 @@ int main(void) {
     camera_vp(v, p, c);
 
     // Render Begin
-    phong_use(&phong);
-    phong_light(&phong, sun);
+    phong_use(phong);
+    phong_light(phong, sun);
 
     transform_mat4(m, cube1);
-    phong_pvm(&phong, p, v, m, c.position);
-    phong_material_tex(&phong, 32.0f, texDiffuse, texSpecular, NULL);
+    phong_pvm(phong, p, v, m, c.position);
+    phong_material_tex(phong, 32.0f, texDiffuse, texSpecular, NULL);
     geometry_draw(objGeo);
 
     transform_mat4(m, cube2);
-    phong_pvm(&phong, p, v, m, c.position);
-    phong_material(&phong, 32.0f, diffuse, specular);
+    phong_pvm(phong, p, v, m, c.position);
+    phong_material(phong, 32.0f, diffuse, specular);
     geometry_draw(objGeo2);
     // Render End
 
