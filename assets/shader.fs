@@ -28,13 +28,13 @@ uniform Light light;
 void main()
 {
     vec3 ambient, diffuse, specular;
+    
     if (material.useDiffuseTexture > 0) {
         ambient =  light.ambient * vec3(texture(material.diffuse, TexCoord));
     } else {
         ambient =  light.ambient *material.diffuseColor;
     }
     
-
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(-light.direction); 
     float diff = max(dot(norm, lightDir), 0.0);
