@@ -14,23 +14,27 @@ void draw(PhongShader shader, Model model, Camera c);
 
 int main(void) {
   GLFWwindow *window = app_init(SCR_WIDTH, SCR_HEIGHT);
-  
+
   Geometry objGeo = geometry_load_obj("assets/cube.obj");
   Material mat = material_create("assets/shader.vs", "assets/shader.fs");
-  material_textures(&mat, 2,"assets/container.png", "assets/container_specular.png");
+  material_textures(&mat, 2, "assets/container.png",
+                    "assets/container_specular.png");
   PhongShader shader = phong_create(mat);
-  
+
   Camera c = {
-      {0.0f, 0.0f, 5.0f}, {0.0f, 0.0f, 0.0f},  {0.0f, 1.0f, 0.0f},
-      glm_rad(50.0f),     0.1f,        100.0f,
-      (float)SCR_WIDTH,          (float)SCR_HEIGHT,
+      {0.0f, 0.0f, 5.0f},
+      {0.0f, 0.0f, 0.0f},
+      {0.0f, 1.0f, 0.0f},
+      glm_rad(50.0f),
+      0.1f,
+      100.0f,
+      (float)SCR_WIDTH,
+      (float)SCR_HEIGHT,
   };
-  Light sun = {
-    {0.5f, 0.5f, 0.5f},
-    {0.8f, 0.8f, 0.8f},
-    {1.0f, 1.0f, 1.0f},
-    {-0.2f, -1.0f, -0.3f}
-  };
+  Light sun = {{0.5f, 0.5f, 0.5f},
+               {0.8f, 0.8f, 0.8f},
+               {1.0f, 1.0f, 1.0f},
+               {-0.2f, -1.0f, -0.3f}};
   Model cube1 = {objGeo, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
 
   phong_set_material(&shader, 0, 1, 32.0f);
@@ -75,10 +79,10 @@ void draw(PhongShader shader, Model model, Camera c) {
 void processInput(GLFWwindow *window, Camera *c) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
-  } 
-  
+  }
+
   if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
-    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
       if (c->position[2] > 0) {
         c->position[2] -= 0.05f;
       }
@@ -86,5 +90,4 @@ void processInput(GLFWwindow *window, Camera *c) {
       c->position[2] += 0.05f;
     }
   }
-  
 }

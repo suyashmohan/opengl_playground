@@ -7,7 +7,6 @@ typedef struct Light {
   vec3 direction;
 } Light;
 
-
 typedef struct PhongShader {
   Material mat;
   struct {
@@ -26,7 +25,7 @@ typedef struct PhongShader {
 } PhongShader;
 
 PhongShader phong_create(Material mat);
-void phong_set_material(PhongShader *shader, int diffuseTex,
-                              int specularTex, float shininess);
+void phong_set_material(PhongShader *shader, int diffuseTex, int specularTex,
+                        float shininess);
 void phong_set_light(PhongShader *shader, Light light);
 void phong_set_pvm(PhongShader *shader, mat4 p, mat4 v, mat4 m, vec3 pos);

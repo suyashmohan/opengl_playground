@@ -60,11 +60,11 @@ void app_quit(GLFWwindow *window) {
   glfwTerminate();
 }
 
-int app_running(GLFWwindow *window, vec4 color) { 
+int app_running(GLFWwindow *window, vec4 color) {
   // Clear the Screen
-  glClearColor(color[0],color[1],color[2],color[3]);
+  glClearColor(color[0], color[1], color[2], color[3]);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  return !glfwWindowShouldClose(window); 
+  return !glfwWindowShouldClose(window);
 }
 
 void app_swap_and_poll(GLFWwindow *window) {
@@ -170,9 +170,7 @@ unsigned int texture_load(const char *file) {
   return texture;
 }
 
-void texture_destroy(unsigned int texture) {
-  glDeleteTextures(1, &texture);
-}
+void texture_destroy(unsigned int texture) { glDeleteTextures(1, &texture); }
 
 Geometry geometry_load_obj(const char *filepath) {
   Geometry obj;
@@ -229,24 +227,24 @@ Geometry geometry_load_obj(const char *filepath) {
   // position attribute
   glGenBuffers(1, &obj.vbo_vertices);
   glBindBuffer(GL_ARRAY_BUFFER, obj.vbo_vertices);
-  glBufferData(GL_ARRAY_BUFFER, obj.faceCount * 3 * 3 * sizeof(float), obj.vertices,
-               GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, obj.faceCount * 3 * 3 * sizeof(float),
+               obj.vertices, GL_STATIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(0);
 
   // normal attribute
   glGenBuffers(1, &obj.vbo_normals);
   glBindBuffer(GL_ARRAY_BUFFER, obj.vbo_normals);
-  glBufferData(GL_ARRAY_BUFFER, obj.faceCount * 3 * 3 * sizeof(float), obj.normals,
-               GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, obj.faceCount * 3 * 3 * sizeof(float),
+               obj.normals, GL_STATIC_DRAW);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(1);
 
   // texture attribute
   glGenBuffers(1, &obj.vbo_texture);
   glBindBuffer(GL_ARRAY_BUFFER, obj.vbo_texture);
-  glBufferData(GL_ARRAY_BUFFER, obj.faceCount * 3 * 2 * sizeof(float), obj.texcoords,
-               GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, obj.faceCount * 3 * 2 * sizeof(float),
+               obj.texcoords, GL_STATIC_DRAW);
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(2);
 
@@ -282,9 +280,10 @@ Material material_create(const char *vrtSrcPath, const char *fragSrcPath) {
   return mat;
 }
 
-void material_textures(Material *mat, int textureCount, const char *textures, ...) {
+void material_textures(Material *mat, int textureCount, const char *textures,
+                       ...) {
   mat->textureCount = textureCount;
-  if(mat->textures != NULL) {
+  if (mat->textures != NULL) {
     printf("Textures already loaded for Material");
     exit(EXIT_FAILURE);
   }

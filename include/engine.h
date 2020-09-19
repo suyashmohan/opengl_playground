@@ -57,7 +57,8 @@ Geometry geometry_load_obj(const char *filePath);
 void geometry_free(Geometry geo);
 
 Material material_create(const char *vrtSrcPath, const char *fragSrcPath);
-void material_textures(Material *mat, int textureCount, const char *textures, ...);
+void material_textures(Material *mat, int textureCount, const char *textures,
+                       ...);
 void material_destroy(Material mat);
 void material_use(Material mat);
 

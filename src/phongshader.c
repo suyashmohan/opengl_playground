@@ -31,8 +31,8 @@ void phong_fetch_locations(PhongShader *shader) {
   shader->location.viewPos = glGetUniformLocation(mat.shader, "viewPos");
 }
 
-void phong_set_material(PhongShader *shader, int diffuseTex,
-                              int specularTex, float shininess) {
+void phong_set_material(PhongShader *shader, int diffuseTex, int specularTex,
+                        float shininess) {
   glUseProgram(shader->mat.shader);
   glUniform1i(shader->location.material_diffuse, 0);
   glUniform1i(shader->location.material_specular, 1);
@@ -41,14 +41,17 @@ void phong_set_material(PhongShader *shader, int diffuseTex,
 
 void phong_set_light(PhongShader *shader, Light light) {
   glUseProgram(shader->mat.shader);
-  glUniform3fv(shader->location.light_ambient, 1, (const GLfloat *)light.ambient);
-  glUniform3fv(shader->location.light_diffuse, 1, (const GLfloat *)light.diffuse);
-  glUniform3fv(shader->location.light_specular, 1, (const GLfloat *)light.specular);
-  glUniform3fv(shader->location.light_direction, 1, (const GLfloat *)light.direction);
+  glUniform3fv(shader->location.light_ambient, 1,
+               (const GLfloat *)light.ambient);
+  glUniform3fv(shader->location.light_diffuse, 1,
+               (const GLfloat *)light.diffuse);
+  glUniform3fv(shader->location.light_specular, 1,
+               (const GLfloat *)light.specular);
+  glUniform3fv(shader->location.light_direction, 1,
+               (const GLfloat *)light.direction);
 }
 
-void phong_set_pvm(PhongShader *shader, mat4 p, mat4 v, mat4 m,
-                         vec3 pos) {
+void phong_set_pvm(PhongShader *shader, mat4 p, mat4 v, mat4 m, vec3 pos) {
   glUniformMatrix4fv(shader->location.view, 1, GL_FALSE, (const GLfloat *)v);
   glUniformMatrix4fv(shader->location.projection, 1, GL_FALSE,
                      (const GLfloat *)p);
