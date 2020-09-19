@@ -15,10 +15,6 @@ void draw(PhongShader *shader, Model model, Camera c);
 int main(void) {
   GLFWwindow *window = app_init(SCR_WIDTH, SCR_HEIGHT);
 
-  int shader = shader_create("assets/shader.vs", "assets/shader.fs");
-  Geometry objGeo = geometry_load_obj("assets/cube.obj");
-  PhongShader phong = phong_create(shader);
-
   Camera c = {
       {0.0f, 0.0f, 5.0f},
       {0.0f, 0.0f, 0.0f},
@@ -33,14 +29,23 @@ int main(void) {
                {0.8f, 0.8f, 0.8f},
                {1.0f, 1.0f, 1.0f},
                {-0.2f, -1.0f, -0.3f}};
-  Model cube1 = {objGeo, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
 
-  // vec3 diffuse = {1.0f, 0.5f, 0.31f};
-  // vec3 specular = {0.5f, 0.5f, 0.5f};
-  // phong_material(&phong, diffuse, specular, 32.0f);
+  int shader = shader_create("assets/shader.vs", "assets/shader.fs");
+  PhongShader phong = phong_create(shader);
+  Geometry objGeo = geometry_load_obj("assets/cube.obj");
+  Model cube1 = {objGeo, {-1.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
   phong_material_tex(&phong, 32.0f, "assets/container.png",
                      "assets/container_specular.png");
   phong_light(&phong, sun);
+
+  int shader2 = shader_create("assets/shader.vs", "assets/shader.fs");
+  PhongShader phong2 = phong_create(shader2);
+  Geometry objGeo2 = geometry_load_obj("assets/suzanne.obj");
+  Model cube2 = {objGeo2, {1.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
+  vec3 diffuse = {0.0f, 0.5f, 0.31f};
+  vec3 specular = {1.0f, 1.0f, 1.0f};
+  phong_material(&phong2, diffuse, specular, 32.0f);
+  phong_light(&phong2, sun);
 
   float angle = 0.0f;
   float step = 1.0f;
@@ -51,16 +56,24 @@ int main(void) {
     cube1.rotation[1] += step / 2.0f;
     cube1.rotation[2] += step / 3.0f;
 
+    cube2.rotation[1] += step / 3.0f;
+
     // Render Begin
     draw(&phong, cube1, c);
+    draw(&phong2, cube2, c);
     // Render End
 
     app_swap_and_poll(window);
   }
 
   phong_destroy(&phong);
-  shader_destroy(shader);
   geometry_free(objGeo);
+  shader_destroy(shader);
+
+  phong_destroy(&phong2);
+  geometry_free(objGeo2);
+  shader_destroy(shader2);
+
   app_quit(window);
 
   return EXIT_SUCCESS;
