@@ -5,6 +5,8 @@
 #include <cglm/util.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#define FAST_OBJ_IMPLEMENTATION
+#include "fast_obj.h"
 
 #include <stdarg.h>
 #include <stdbool.h>
@@ -58,7 +60,12 @@ void app_quit(GLFWwindow *window) {
   glfwTerminate();
 }
 
-int app_running(GLFWwindow *window) { return !glfwWindowShouldClose(window); }
+int app_running(GLFWwindow *window, vec4 color) { 
+  // Clear the Screen
+  glClearColor(color[0],color[1],color[2],color[3]);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  return !glfwWindowShouldClose(window); 
+}
 
 void app_swap_and_poll(GLFWwindow *window) {
   glfwSwapBuffers(window);
@@ -89,7 +96,7 @@ char *app_readfile(const char *filePath) {
   return buffer;
 }
 
-int gfx_shader_compile(GLenum type, const char *source) {
+int shader_compile(GLenum type, const char *source) {
   int success;
   char infoLog[512];
 
@@ -105,12 +112,12 @@ int gfx_shader_compile(GLenum type, const char *source) {
   return shader;
 }
 
-int gfx_shader_program(const char *vertSrc, const char *fragSrc) {
+int shader_program(const char *vertSrc, const char *fragSrc) {
   int success;
   char infoLog[512];
 
-  int vertexShader = gfx_shader_compile(GL_VERTEX_SHADER, vertSrc);
-  int fragmentShader = gfx_shader_compile(GL_FRAGMENT_SHADER, fragSrc);
+  int vertexShader = shader_compile(GL_VERTEX_SHADER, vertSrc);
+  int fragmentShader = shader_compile(GL_FRAGMENT_SHADER, fragSrc);
 
   if (!vertexShader || !fragmentShader) {
     return 0;
@@ -134,9 +141,9 @@ int gfx_shader_program(const char *vertSrc, const char *fragSrc) {
   return shaderProgram;
 }
 
-void gfx_shader_destroy(int shaderProgram) { glDeleteProgram(shaderProgram); }
+void shader_destroy(int shaderProgram) { glDeleteProgram(shaderProgram); }
 
-unsigned int gfx_texture_load(const char *file) {
+unsigned int texture_load(const char *file) {
   // load texture
   unsigned int texture;
   glGenTextures(1, &texture);
@@ -163,59 +170,105 @@ unsigned int gfx_texture_load(const char *file) {
   return texture;
 }
 
-void gfx_texture_destroy(unsigned int texture) {
+void texture_destroy(unsigned int texture) {
   glDeleteTextures(1, &texture);
 }
 
-Mesh gfx_mesh_load(int countVertices, const float vertices[],
-                   const float normals[], const float textures[]) {
-  Mesh m;
-  m.verticesCount = countVertices;
+Geometry geometry_load_obj(const char *filepath) {
+  Geometry obj;
 
-  glGenVertexArrays(1, &m.vao);
-  glBindVertexArray(m.vao);
+  fastObjMesh *objMesh = fast_obj_read(filepath);
+  if (objMesh == NULL) {
+    printf("Unable to load OBJ file: %s\n", filepath);
+    exit(EXIT_FAILURE);
+  }
+  obj.faceCount = objMesh->face_count;
+  obj.vertices = malloc(sizeof(float) * 3 * 3 * obj.faceCount);
+  obj.texcoords = malloc(sizeof(float) * 2 * 3 * obj.faceCount);
+  obj.normals = malloc(sizeof(float) * 3 * 3 * obj.faceCount);
+
+  unsigned int vi, vni, vti;
+  vi = vni = vti = 0;
+  for (unsigned int ii = 0; ii < objMesh->group_count; ++ii) {
+    const fastObjGroup grp = objMesh->groups[ii];
+    int idx = 0;
+    for (unsigned int jj = 0; jj < grp.face_count; ++jj) {
+      unsigned int fv = objMesh->face_vertices[grp.face_offset + jj];
+      for (unsigned int kk = 0; kk < fv; ++kk) {
+        fastObjIndex mi = objMesh->indices[grp.index_offset + idx];
+        if (mi.p) {
+          obj.vertices[vi] = objMesh->positions[3 * mi.p + 0];
+          obj.vertices[vi + 1] = objMesh->positions[3 * mi.p + 1];
+          obj.vertices[vi + 2] = objMesh->positions[3 * mi.p + 2];
+          vi += 3;
+        }
+
+        if (mi.t) {
+          obj.texcoords[vti] = objMesh->texcoords[2 * mi.t + 0];
+          obj.texcoords[vti + 1] = objMesh->texcoords[2 * mi.t + 1];
+          vti += 2;
+        }
+
+        if (mi.n) {
+          obj.normals[vni] = objMesh->normals[3 * mi.n + 0];
+          obj.normals[vni + 1] = objMesh->normals[3 * mi.n + 1];
+          obj.normals[vni + 2] = objMesh->normals[3 * mi.n + 2];
+          vni += 3;
+        }
+
+        ++idx;
+      }
+    }
+  }
+
+  fast_obj_destroy(objMesh);
+
+  glGenVertexArrays(1, &obj.vao);
+  glBindVertexArray(obj.vao);
 
   // position attribute
-  glGenBuffers(1, &m.vbo_vertices);
-  glBindBuffer(GL_ARRAY_BUFFER, m.vbo_vertices);
-  glBufferData(GL_ARRAY_BUFFER, countVertices * 3 * sizeof(float), vertices,
+  glGenBuffers(1, &obj.vbo_vertices);
+  glBindBuffer(GL_ARRAY_BUFFER, obj.vbo_vertices);
+  glBufferData(GL_ARRAY_BUFFER, obj.faceCount * 3 * 3 * sizeof(float), obj.vertices,
                GL_STATIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(0);
 
   // normal attribute
-  glGenBuffers(1, &m.vbo_normals);
-  glBindBuffer(GL_ARRAY_BUFFER, m.vbo_normals);
-  glBufferData(GL_ARRAY_BUFFER, countVertices * 3 * sizeof(float), normals,
+  glGenBuffers(1, &obj.vbo_normals);
+  glBindBuffer(GL_ARRAY_BUFFER, obj.vbo_normals);
+  glBufferData(GL_ARRAY_BUFFER, obj.faceCount * 3 * 3 * sizeof(float), obj.normals,
                GL_STATIC_DRAW);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(1);
 
   // texture attribute
-  glGenBuffers(1, &m.vbo_texture);
-  glBindBuffer(GL_ARRAY_BUFFER, m.vbo_texture);
-  glBufferData(GL_ARRAY_BUFFER, countVertices * 2 * sizeof(float), textures,
+  glGenBuffers(1, &obj.vbo_texture);
+  glBindBuffer(GL_ARRAY_BUFFER, obj.vbo_texture);
+  glBufferData(GL_ARRAY_BUFFER, obj.faceCount * 3 * 2 * sizeof(float), obj.texcoords,
                GL_STATIC_DRAW);
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(2);
 
-  return m;
+  return obj;
 }
 
-void gfx_mesh_free(Mesh m) {
-  glDeleteVertexArrays(1, &m.vao);
-  glDeleteBuffers(1, &m.vbo_normals);
-  glDeleteBuffers(1, &m.vbo_texture);
-  glDeleteBuffers(1, &m.vbo_vertices);
+void geometry_free(Geometry g) {
+  free(g.vertices);
+  free(g.texcoords);
+  free(g.normals);
+  glDeleteVertexArrays(1, &g.vao);
+  glDeleteBuffers(1, &g.vbo_normals);
+  glDeleteBuffers(1, &g.vbo_texture);
+  glDeleteBuffers(1, &g.vbo_vertices);
 }
 
-Material gfx_material_create(const char *vrtSrcPath, const char *fragSrcPath,
-                             int textureCount, const char *textures, ...) {
+Material material_create(const char *vrtSrcPath, const char *fragSrcPath) {
   Material mat;
 
   char *vrtSrc = app_readfile(vrtSrcPath);
   char *fragSrc = app_readfile(fragSrcPath);
-  mat.shader = gfx_shader_program(vrtSrc, fragSrc);
+  mat.shader = shader_program(vrtSrc, fragSrc);
   free(vrtSrc);
   free(fragSrc);
 
@@ -223,35 +276,45 @@ Material gfx_material_create(const char *vrtSrcPath, const char *fragSrcPath,
     exit(EXIT_FAILURE);
   }
 
-  mat.textureCount = textureCount;
+  mat.textureCount = 0;
   mat.textures = NULL;
+
+  return mat;
+}
+
+void material_textures(Material *mat, int textureCount, const char *textures, ...) {
+  mat->textureCount = textureCount;
+  if(mat->textures != NULL) {
+    printf("Textures already loaded for Material");
+    exit(EXIT_FAILURE);
+  }
+
   if (textureCount > 0) {
-    mat.textures = malloc(sizeof(int));
+    mat->textures = malloc(sizeof(int));
     va_list args;
     va_start(args, textures);
-    for (int i = 0; i < mat.textureCount; i++) {
-      unsigned int tex = gfx_texture_load(textures);
+    for (int i = 0; i < mat->textureCount; i++) {
+      unsigned int tex = texture_load(textures);
       if (tex == 0) {
         exit(EXIT_FAILURE);
       }
-      mat.textures[i] = tex;
+      mat->textures[i] = tex;
       textures = va_arg(args, const char *);
     }
     va_end(args);
   }
-  return mat;
 }
 
-void gfx_material_destroy(Material mat) {
-  gfx_shader_destroy(mat.shader);
+void material_destroy(Material mat) {
+  shader_destroy(mat.shader);
   if (mat.textureCount > 0) {
     for (int i = 0; i < mat.textureCount; ++i) {
-      gfx_texture_destroy(mat.textures[i]);
+      texture_destroy(mat.textures[i]);
     }
   }
 }
 
-void gfx_material_use(Material mat) {
+void material_use(Material mat) {
   glUseProgram(mat.shader);
   for (int i = 0; i < mat.textureCount; i++) {
     glActiveTexture(GL_TEXTURE0 + i);
@@ -259,7 +322,7 @@ void gfx_material_use(Material mat) {
   }
 }
 
-void gfx_model_mat4(mat4 m, Model model) {
+void model_mat4(mat4 m, Model model) {
   glm_mat4_identity(m);
   glm_translate(m, model.position);
   glm_rotate_x(m, glm_rad(model.rotation[0]), m);
@@ -267,12 +330,12 @@ void gfx_model_mat4(mat4 m, Model model) {
   glm_rotate_z(m, glm_rad(model.rotation[2]), m);
 }
 
-void gfx_model_draw(Model model) {
-  glBindVertexArray(model.mesh.vao);
-  glDrawArrays(GL_TRIANGLES, 0, model.mesh.verticesCount);
+void model_draw(Model model) {
+  glBindVertexArray(model.geometry.vao);
+  glDrawArrays(GL_TRIANGLES, 0, model.geometry.faceCount * 3);
 }
 
-void gfx_camera_vp(mat4 v, mat4 p, Camera c) {
+void camera_vp(mat4 v, mat4 p, Camera c) {
   glm_lookat(c.position, c.target, c.up, v);
   glm_perspective(c.fov, c.width / c.height, c.near, c.far, p);
 }

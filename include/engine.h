@@ -6,16 +6,19 @@
 #include <cglm/cglm.h>
 #include <glad/glad.h>
 
-typedef struct Mesh {
+typedef struct Geometry {
   unsigned int vao;
   unsigned int vbo_vertices;
   unsigned int vbo_normals;
   unsigned int vbo_texture;
-  int verticesCount;
-} Mesh;
+  int faceCount;
+  float *vertices;
+  float *normals;
+  float *texcoords;
+} Geometry;
 
 typedef struct Model {
-  Mesh mesh;
+  Geometry geometry;
   vec3 position;
   vec3 rotation;
 } Model;
@@ -37,31 +40,30 @@ typedef struct Camera {
   float height;
 } Camera;
 
-GLFWwindow *app_init();
+GLFWwindow *app_init(int width, int height);
 void app_quit(GLFWwindow *window);
-int app_running(GLFWwindow *window);
+int app_running(GLFWwindow *window, vec4 color);
 void app_swap_and_poll(GLFWwindow *window);
 char *app_readfile(const char *filePath);
 
-int gfx_shader_compile(GLenum type, const char *source);
-int gfx_shader_program(const char *vertSrc, const char *fragSrc);
-void gfx_shader_destroy(int shaderProgram);
+int shader_compile(GLenum type, const char *source);
+int shader_program(const char *vertSrc, const char *fragSrc);
+void shader_destroy(int shaderProgram);
 
-unsigned int gfx_texture_load(const char *file);
-void gfx_texture_destroy(unsigned int texture);
+unsigned int texture_load(const char *file);
+void texture_destroy(unsigned int texture);
 
-Mesh gfx_mesh_load(int countVertices, const float vertices[],
-                   const float normals[], const float textures[]);
-void gfx_mesh_free(Mesh m);
+Geometry geometry_load_obj(const char *filePath);
+void geometry_free(Geometry geo);
 
-Material gfx_material_create(const char *vrtSrcPath, const char *fragSrcPath,
-                             int textureCount, const char *textures, ...);
-void gfx_material_destroy(Material mat);
-void gfx_material_use(Material mat);
+Material material_create(const char *vrtSrcPath, const char *fragSrcPath);
+void material_textures(Material *mat, int textureCount, const char *textures, ...);
+void material_destroy(Material mat);
+void material_use(Material mat);
 
-void gfx_model_mat4(mat4 m, Model model);
-void gfx_model_draw(Model model);
+void model_mat4(mat4 m, Model model);
+void model_draw(Model model);
 
-void gfx_camera_vp(mat4 v, mat4 p, Camera c);
+void camera_vp(mat4 v, mat4 p, Camera c);
 
 #endif
