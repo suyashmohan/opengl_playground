@@ -245,9 +245,7 @@ int shader_create(const char *vrtSrcPath, const char *fragSrcPath) {
   return shader;
 }
 
-void shader_use(int shader) {
-  glUseProgram(shader);
-}
+void shader_use(int shader) { glUseProgram(shader); }
 
 void model_mat4(mat4 m, Model model) {
   glm_mat4_identity(m);

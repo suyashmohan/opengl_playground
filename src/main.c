@@ -35,11 +35,11 @@ int main(void) {
                {-0.2f, -1.0f, -0.3f}};
   Model cube1 = {objGeo, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
 
-  //vec3 diffuse = {1.0f, 0.5f, 0.31f};
-  //vec3 specular = {0.5f, 0.5f, 0.5f};
-  //phong_material(&phong, diffuse, specular, 32.0f);
+  // vec3 diffuse = {1.0f, 0.5f, 0.31f};
+  // vec3 specular = {0.5f, 0.5f, 0.5f};
+  // phong_material(&phong, diffuse, specular, 32.0f);
   phong_material_tex(&phong, 32.0f, "assets/container.png",
-                    "assets/container_specular.png");
+                     "assets/container_specular.png");
   phong_light(&phong, sun);
 
   float angle = 0.0f;

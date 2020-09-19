@@ -5,8 +5,8 @@
 
 unsigned int texture_load(const char *file);
 void texture_destroy(unsigned int texture);
-void material_textures(PhongShader *phong, int textureCount, const char *textures,
-                       ...);
+void material_textures(PhongShader *phong, int textureCount,
+                       const char *textures, ...);
 void material_fetch_locations(PhongShader *phong);
 
 PhongShader phong_create(int shader) {
@@ -19,8 +19,9 @@ PhongShader phong_create(int shader) {
   return phong;
 }
 
-void phong_material_tex(PhongShader *phong, float shininess, const char *diffuseTex, const char *specularTex) {
-  glUniform1f(phong->location.material_shininess, shininess); 
+void phong_material_tex(PhongShader *phong, float shininess,
+                        const char *diffuseTex, const char *specularTex) {
+  glUniform1f(phong->location.material_shininess, shininess);
   glUniform1i(phong->location.material_diffuse, 0);
   glUniform1i(phong->location.material_usediffusetex, 1);
 
@@ -34,14 +35,13 @@ void phong_material_tex(PhongShader *phong, float shininess, const char *diffuse
   }
 }
 
-void phong_material(PhongShader *phong, vec3 color, vec3 specular, float shininess) {
+void phong_material(PhongShader *phong, vec3 color, vec3 specular,
+                    float shininess) {
   glUniform1i(phong->location.material_usediffusetex, 0);
   glUniform1i(phong->location.material_usespeculartex, 0);
-  glUniform1f(phong->location.material_shininess, shininess); 
-  glUniform3fv(phong->location.material_diffuse_clr, 1,
-               (const GLfloat *)color);
-  glUniform3fv(phong->location.material_diffuse_clr, 1,
-               (const GLfloat *)color);
+  glUniform1f(phong->location.material_shininess, shininess);
+  glUniform3fv(phong->location.material_diffuse_clr, 1, (const GLfloat *)color);
+  glUniform3fv(phong->location.material_diffuse_clr, 1, (const GLfloat *)color);
   glUniform3fv(phong->location.material_specular_clr, 1,
                (const GLfloat *)specular);
 }
@@ -66,7 +66,7 @@ void phong_pvm(PhongShader *phong, mat4 p, mat4 v, mat4 m, vec3 pos) {
 }
 
 void phong_destroy(PhongShader *phong) {
-  //shader_destroy(phong->shader);
+  // shader_destroy(phong->shader);
   if (phong->textureCount > 0) {
     for (int i = 0; i < phong->textureCount; ++i) {
       texture_destroy(phong->textures[i]);
@@ -111,8 +111,8 @@ unsigned int texture_load(const char *file) {
 
 void texture_destroy(unsigned int texture) { glDeleteTextures(1, &texture); }
 
-void material_textures(PhongShader *phong, int textureCount, const char *textures,
-                       ...) {
+void material_textures(PhongShader *phong, int textureCount,
+                       const char *textures, ...) {
   phong->textureCount = textureCount;
   if (phong->textures != NULL) {
     printf("Textures already loaded for Material");
@@ -147,14 +147,12 @@ void material_fetch_locations(PhongShader *phong) {
       glGetUniformLocation(shader, "material.diffuseColor");
   phong->location.material_specular_clr =
       glGetUniformLocation(shader, "material.specularColor");
-      phong->location.material_usediffusetex =
+  phong->location.material_usediffusetex =
       glGetUniformLocation(shader, "material.useDiffuseTexture");
   phong->location.material_usespeculartex =
       glGetUniformLocation(shader, "material.useSpecularTexture");
-  phong->location.light_ambient =
-      glGetUniformLocation(shader, "light.ambient");
-  phong->location.light_diffuse =
-      glGetUniformLocation(shader, "light.diffuse");
+  phong->location.light_ambient = glGetUniformLocation(shader, "light.ambient");
+  phong->location.light_diffuse = glGetUniformLocation(shader, "light.diffuse");
   phong->location.light_specular =
       glGetUniformLocation(shader, "light.specular");
   phong->location.light_direction =

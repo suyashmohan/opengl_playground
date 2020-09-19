@@ -11,7 +11,7 @@ typedef struct PhongShader {
   int shader;
   struct {
     int material_diffuse;
-    int material_specular;    
+    int material_specular;
     int material_shininess;
     int material_diffuse_clr;
     int material_specular_clr;
@@ -31,8 +31,10 @@ typedef struct PhongShader {
 } PhongShader;
 
 PhongShader phong_create(int shader);
-void phong_material(PhongShader *phong, vec3 difuse, vec3 specular, float shininess);
-void phong_material_tex(PhongShader *phong, float shininess, const char *diffuseTex, const char *specularTex);
+void phong_material(PhongShader *phong, vec3 difuse, vec3 specular,
+                    float shininess);
+void phong_material_tex(PhongShader *phong, float shininess,
+                        const char *diffuseTex, const char *specularTex);
 void phong_light(PhongShader *phong, Light light);
 void phong_pvm(PhongShader *phong, mat4 p, mat4 v, mat4 m, vec3 pos);
 void phong_destroy(PhongShader *phong);
