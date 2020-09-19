@@ -17,11 +17,11 @@ typedef struct Geometry {
   float *texcoords;
 } Geometry;
 
-typedef struct Model {
-  Geometry geometry;
+typedef struct Transform {
   vec3 position;
   vec3 rotation;
-} Model;
+  vec3 scale;
+} Transform;
 
 typedef struct Camera {
   vec3 position;
@@ -48,10 +48,12 @@ void shader_use(int shader);
 
 Geometry geometry_load_obj(const char *filePath);
 void geometry_free(Geometry geo);
+void geometry_draw(Geometry geo);
 
-void model_mat4(mat4 m, Model model);
-void model_draw(Model model);
+unsigned int texture_load(const char *file);
+void texture_destroy(unsigned int texture);
 
+void transform_mat4(mat4 m, Transform transform);
 void camera_vp(mat4 v, mat4 p, Camera c);
 
 #endif

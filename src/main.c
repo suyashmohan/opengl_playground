@@ -10,7 +10,6 @@ const int SCR_WIDTH = 1024;
 const int SCR_HEIGHT = 600;
 
 void processInput(GLFWwindow *window, Camera *c);
-void draw(PhongShader *shader, Model model, Camera c);
 
 int main(void) {
   GLFWwindow *window = app_init(SCR_WIDTH, SCR_HEIGHT);
@@ -32,24 +31,24 @@ int main(void) {
 
   int shader = shader_create("assets/shader.vs", "assets/shader.fs");
   PhongShader phong = phong_create(shader);
-  Geometry objGeo = geometry_load_obj("assets/cube.obj");
-  Model cube1 = {objGeo, {-1.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
-  phong_material_tex(&phong, 32.0f, "assets/container.png",
-                     "assets/container_specular.png");
-  phong_light(&phong, sun);
 
-  int shader2 = shader_create("assets/shader.vs", "assets/shader.fs");
-  PhongShader phong2 = phong_create(shader2);
-  Geometry objGeo2 = geometry_load_obj("assets/suzanne.obj");
-  Model cube2 = {objGeo2, {1.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
+  int texDiffuse = texture_load("assets/container.png");
+  int texSpecular = texture_load("assets/container_specular.png");
   vec3 diffuse = {0.0f, 0.5f, 0.31f};
   vec3 specular = {1.0f, 1.0f, 1.0f};
-  phong_material(&phong2, diffuse, specular, 32.0f);
-  phong_light(&phong2, sun);
+
+  Geometry objGeo = geometry_load_obj("assets/cube.obj");
+  Transform cube1 = {
+      {-1.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}};
+
+  Geometry objGeo2 = geometry_load_obj("assets/suzanne.obj");
+  Transform cube2 = {
+      {1.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}};
 
   float angle = 0.0f;
   float step = 1.0f;
   vec4 bgColor = {0.2f, 0.3f, 0.3f, 1.0f};
+  mat4 p, v, m;
   while (app_running(window, bgColor)) {
     processInput(window, &c);
     cube1.rotation[0] += step;
@@ -58,36 +57,35 @@ int main(void) {
 
     cube2.rotation[1] += step / 3.0f;
 
+    camera_vp(v, p, c);
+
     // Render Begin
-    draw(&phong, cube1, c);
-    draw(&phong2, cube2, c);
+    phong_use(&phong);
+    phong_light(&phong, sun);
+
+    transform_mat4(m, cube1);
+    phong_pvm(&phong, p, v, m, c.position);
+    phong_material_tex(&phong, 32.0f, texDiffuse, texSpecular, NULL);
+    geometry_draw(objGeo);
+
+    transform_mat4(m, cube2);
+    phong_pvm(&phong, p, v, m, c.position);
+    phong_material(&phong, 32.0f, diffuse, specular);
+    geometry_draw(objGeo2);
     // Render End
 
     app_swap_and_poll(window);
   }
 
-  phong_destroy(&phong);
-  geometry_free(objGeo);
   shader_destroy(shader);
-
-  phong_destroy(&phong2);
+  geometry_free(objGeo);
   geometry_free(objGeo2);
-  shader_destroy(shader2);
+  texture_destroy(texDiffuse);
+  texture_destroy(texSpecular);
 
   app_quit(window);
 
   return EXIT_SUCCESS;
-}
-
-void draw(PhongShader *phong, Model model, Camera c) {
-  mat4 p, v, m;
-
-  camera_vp(v, p, c);
-  model_mat4(m, model);
-
-  phong_use(phong);
-  phong_pvm(phong, p, v, m, c.position);
-  model_draw(model);
 }
 
 void processInput(GLFWwindow *window, Camera *c) {

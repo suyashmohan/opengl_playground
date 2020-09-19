@@ -26,16 +26,13 @@ typedef struct PhongShader {
     int model;
     int viewPos;
   } location;
-  int textureCount;
-  int *textures;
 } PhongShader;
 
 PhongShader phong_create(int shader);
-void phong_material(PhongShader *phong, vec3 difuse, vec3 specular,
-                    float shininess);
-void phong_material_tex(PhongShader *phong, float shininess,
-                        const char *diffuseTex, const char *specularTex);
+void phong_material(PhongShader *phong, float shininess, vec3 difuse,
+                    vec3 specular);
+void phong_material_tex(PhongShader *phong, float shininess, int glDiffuseTex,
+                        int glSpecularTex, vec3 specular);
 void phong_light(PhongShader *phong, Light light);
 void phong_pvm(PhongShader *phong, mat4 p, mat4 v, mat4 m, vec3 pos);
-void phong_destroy(PhongShader *phong);
 void phong_use(PhongShader *phong);

@@ -3,6 +3,8 @@
 #include <cglm/cam.h>
 #include <cglm/mat4.h>
 #include <cglm/util.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 #define FAST_OBJ_IMPLEMENTATION
 #include "fast_obj.h"
 
@@ -140,6 +142,24 @@ int shader_program(const char *vertSrc, const char *fragSrc) {
 
 void shader_destroy(int shaderProgram) { glDeleteProgram(shaderProgram); }
 
+int shader_create(const char *vrtSrcPath, const char *fragSrcPath) {
+  int shader;
+
+  char *vrtSrc = app_readfile(vrtSrcPath);
+  char *fragSrc = app_readfile(fragSrcPath);
+  shader = shader_program(vrtSrc, fragSrc);
+  free(vrtSrc);
+  free(fragSrc);
+
+  if (shader == 0) {
+    exit(EXIT_FAILURE);
+  }
+
+  return shader;
+}
+
+void shader_use(int shader) { glUseProgram(shader); }
+
 Geometry geometry_load_obj(const char *filepath) {
   Geometry obj;
 
@@ -229,35 +249,46 @@ void geometry_free(Geometry g) {
   glDeleteBuffers(1, &g.vbo_vertices);
 }
 
-int shader_create(const char *vrtSrcPath, const char *fragSrcPath) {
-  int shader;
+void geometry_draw(Geometry geo) {
+  glBindVertexArray(geo.vao);
+  glDrawArrays(GL_TRIANGLES, 0, geo.faceCount * 3);
+}
 
-  char *vrtSrc = app_readfile(vrtSrcPath);
-  char *fragSrc = app_readfile(fragSrcPath);
-  shader = shader_program(vrtSrc, fragSrc);
-  free(vrtSrc);
-  free(fragSrc);
+unsigned int texture_load(const char *file) {
+  // load texture
+  unsigned int texture;
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                  GL_LINEAR_MIPMAP_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  if (shader == 0) {
-    exit(EXIT_FAILURE);
+  int imgW, imgH, nrChannels;
+  stbi_set_flip_vertically_on_load(true);
+  unsigned char *data = stbi_load(file, &imgW, &imgH, &nrChannels, 0);
+  if (!data) {
+    printf("Unabel to load image: %s\n", file);
+    return 0;
   }
+  printf("Image Loaded : %s - %dx%d [%d]\n", file, imgW, imgH, nrChannels);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgW, imgH, 0, GL_RGBA,
+               GL_UNSIGNED_BYTE, data);
+  glGenerateMipmap(GL_TEXTURE_2D);
+  stbi_image_free(data);
 
-  return shader;
+  return texture;
 }
 
-void shader_use(int shader) { glUseProgram(shader); }
+void texture_destroy(unsigned int texture) { glDeleteTextures(1, &texture); }
 
-void model_mat4(mat4 m, Model model) {
+void transform_mat4(mat4 m, Transform transform) {
   glm_mat4_identity(m);
-  glm_translate(m, model.position);
-  glm_rotate_x(m, glm_rad(model.rotation[0]), m);
-  glm_rotate_y(m, glm_rad(model.rotation[1]), m);
-  glm_rotate_z(m, glm_rad(model.rotation[2]), m);
-}
-
-void model_draw(Model model) {
-  glBindVertexArray(model.geometry.vao);
-  glDrawArrays(GL_TRIANGLES, 0, model.geometry.faceCount * 3);
+  glm_translate(m, transform.position);
+  glm_rotate_x(m, glm_rad(transform.rotation[0]), m);
+  glm_rotate_y(m, glm_rad(transform.rotation[1]), m);
+  glm_rotate_z(m, glm_rad(transform.rotation[2]), m);
 }
 
 void camera_vp(mat4 v, mat4 p, Camera c) {
