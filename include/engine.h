@@ -23,12 +23,6 @@ typedef struct Model {
   vec3 rotation;
 } Model;
 
-typedef struct Material {
-  int shader;
-  int textureCount;
-  int *textures;
-} Material;
-
 typedef struct Camera {
   vec3 position;
   vec3 target;
@@ -49,18 +43,11 @@ char *app_readfile(const char *filePath);
 int shader_compile(GLenum type, const char *source);
 int shader_program(const char *vertSrc, const char *fragSrc);
 void shader_destroy(int shaderProgram);
-
-unsigned int texture_load(const char *file);
-void texture_destroy(unsigned int texture);
+int shader_create(const char *vrtSrcPath, const char *fragSrcPath);
+void shader_use(int shader);
 
 Geometry geometry_load_obj(const char *filePath);
 void geometry_free(Geometry geo);
-
-Material material_create(const char *vrtSrcPath, const char *fragSrcPath);
-void material_textures(Material *mat, int textureCount, const char *textures,
-                       ...);
-void material_destroy(Material mat);
-void material_use(Material mat);
 
 void model_mat4(mat4 m, Model model);
 void model_draw(Model model);

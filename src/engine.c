@@ -3,12 +3,9 @@
 #include <cglm/cam.h>
 #include <cglm/mat4.h>
 #include <cglm/util.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 #define FAST_OBJ_IMPLEMENTATION
 #include "fast_obj.h"
 
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -143,35 +140,6 @@ int shader_program(const char *vertSrc, const char *fragSrc) {
 
 void shader_destroy(int shaderProgram) { glDeleteProgram(shaderProgram); }
 
-unsigned int texture_load(const char *file) {
-  // load texture
-  unsigned int texture;
-  glGenTextures(1, &texture);
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                  GL_LINEAR_MIPMAP_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  int imgW, imgH, nrChannels;
-  stbi_set_flip_vertically_on_load(true);
-  unsigned char *data = stbi_load(file, &imgW, &imgH, &nrChannels, 0);
-  if (!data) {
-    printf("Unabel to load image: %s\n", file);
-    return 0;
-  }
-  printf("Image Loaded : %s - %dx%d [%d]\n", file, imgW, imgH, nrChannels);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgW, imgH, 0, GL_RGBA,
-               GL_UNSIGNED_BYTE, data);
-  glGenerateMipmap(GL_TEXTURE_2D);
-  stbi_image_free(data);
-
-  return texture;
-}
-
-void texture_destroy(unsigned int texture) { glDeleteTextures(1, &texture); }
-
 Geometry geometry_load_obj(const char *filepath) {
   Geometry obj;
 
@@ -261,64 +229,24 @@ void geometry_free(Geometry g) {
   glDeleteBuffers(1, &g.vbo_vertices);
 }
 
-Material material_create(const char *vrtSrcPath, const char *fragSrcPath) {
-  Material mat;
+int shader_create(const char *vrtSrcPath, const char *fragSrcPath) {
+  int shader;
 
   char *vrtSrc = app_readfile(vrtSrcPath);
   char *fragSrc = app_readfile(fragSrcPath);
-  mat.shader = shader_program(vrtSrc, fragSrc);
+  shader = shader_program(vrtSrc, fragSrc);
   free(vrtSrc);
   free(fragSrc);
 
-  if (mat.shader == 0) {
+  if (shader == 0) {
     exit(EXIT_FAILURE);
   }
 
-  mat.textureCount = 0;
-  mat.textures = NULL;
-
-  return mat;
+  return shader;
 }
 
-void material_textures(Material *mat, int textureCount, const char *textures,
-                       ...) {
-  mat->textureCount = textureCount;
-  if (mat->textures != NULL) {
-    printf("Textures already loaded for Material");
-    exit(EXIT_FAILURE);
-  }
-
-  if (textureCount > 0) {
-    mat->textures = malloc(sizeof(int));
-    va_list args;
-    va_start(args, textures);
-    for (int i = 0; i < mat->textureCount; i++) {
-      unsigned int tex = texture_load(textures);
-      if (tex == 0) {
-        exit(EXIT_FAILURE);
-      }
-      mat->textures[i] = tex;
-      textures = va_arg(args, const char *);
-    }
-    va_end(args);
-  }
-}
-
-void material_destroy(Material mat) {
-  shader_destroy(mat.shader);
-  if (mat.textureCount > 0) {
-    for (int i = 0; i < mat.textureCount; ++i) {
-      texture_destroy(mat.textures[i]);
-    }
-  }
-}
-
-void material_use(Material mat) {
-  glUseProgram(mat.shader);
-  for (int i = 0; i < mat.textureCount; i++) {
-    glActiveTexture(GL_TEXTURE0 + i);
-    glBindTexture(GL_TEXTURE_2D, mat.textures[i]);
-  }
+void shader_use(int shader) {
+  glUseProgram(shader);
 }
 
 void model_mat4(mat4 m, Model model) {
