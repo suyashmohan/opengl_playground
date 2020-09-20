@@ -292,6 +292,7 @@ void transform_mat4(mat4 m, Transform transform) {
   glm_rotate_x(m, glm_rad(transform.rotation[0]), m);
   glm_rotate_y(m, glm_rad(transform.rotation[1]), m);
   glm_rotate_z(m, glm_rad(transform.rotation[2]), m);
+  glm_scale(m, transform.scale);
 }
 
 void camera_vp(mat4 v, mat4 p, Camera c) {

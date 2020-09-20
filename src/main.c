@@ -49,7 +49,18 @@ int main(void) {
   float step = 1.0f;
   vec4 bgColor = {0.2f, 0.3f, 0.3f, 1.0f};
   mat4 p, v, m;
+  double previousTime = glfwGetTime();
+  int frameCount = 0;
   while (app_running(window, bgColor)) {
+      double currentTime = glfwGetTime();
+      frameCount++;
+      if (currentTime - previousTime >= 1.0)
+      {
+          printf("FPS: %d\n", frameCount);
+          frameCount = 0;
+          previousTime = currentTime;
+      }
+
     processInput(window, &c);
     cube1.rotation[0] += step;
     cube1.rotation[1] += step / 2.0f;
