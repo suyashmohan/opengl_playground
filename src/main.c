@@ -5,6 +5,7 @@
 
 #include "engine.h"
 #include "phongshader.h"
+#include "skybox.h"
 
 const int SCR_WIDTH = 1024;
 const int SCR_HEIGHT = 600;
@@ -30,6 +31,7 @@ int main(void) {
                {-0.2f, -1.0f, -0.3f}};
 
   int shader = shader_create("assets/shader.vs", "assets/shader.fs");
+  int skyboxShader = shader_create("assets/skybox.vs", "assets/skybox.fs");
   PhongShader phong = phong_create(shader);
 
   int texDiffuse = texture_load("assets/container.png");
@@ -44,6 +46,17 @@ int main(void) {
   Geometry objGeo2 = geometry_load_obj("assets/suzanne.obj");
   Transform cube2 = {
       {1.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}};
+
+  const char *files[] = {
+    "assets/skybox/right.jpg",
+    "assets/skybox/left.jpg",
+    "assets/skybox/top.jpg",
+    "assets/skybox/bottom.jpg",
+    "assets/skybox/front.jpg",
+    "assets/skybox/back.jpg"};
+
+  int skycubemap = cubemap_load(6, files);
+  SkyBox skybox  = skybox_init(skyboxShader, skycubemap);
 
   float angle = 0.0f;
   float step = 1.0f;
@@ -83,16 +96,20 @@ int main(void) {
     phong_pvm(phong, p, v, m, c.position);
     phong_material(phong, 32.0f, diffuse, specular);
     geometry_draw(objGeo2);
+
+    skybox_draw(skybox, v, p);
     // Render End
 
     app_swap_and_poll(window);
   }
 
   shader_destroy(shader);
+  shader_destroy(skyboxShader);
   geometry_free(objGeo);
   geometry_free(objGeo2);
   texture_destroy(texDiffuse);
   texture_destroy(texSpecular);
+  cubemap_destroy(skycubemap);
 
   app_quit(window);
 

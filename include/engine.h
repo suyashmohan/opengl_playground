@@ -53,6 +53,9 @@ void geometry_draw(Geometry geo);
 unsigned int texture_load(const char *file);
 void texture_destroy(unsigned int texture);
 
+unsigned int cubemap_load(int count, const char *file[]);
+void cubemap_destroy(unsigned int cubemap);
+
 void transform_mat4(mat4 m, Transform transform);
 void camera_vp(mat4 v, mat4 p, Camera c);
 

@@ -1,3 +1,6 @@
+#ifndef PHONGSHADER_H
+#define PHONGSHADER_H
+
 #include "engine.h"
 
 typedef struct Light {
@@ -36,3 +39,5 @@ void phong_material_tex(PhongShader phong, float shininess, int glDiffuseTex,
 void phong_light(PhongShader phong, Light light);
 void phong_pvm(PhongShader phong, mat4 p, mat4 v, mat4 m, vec3 pos);
 void phong_use(PhongShader phong);
+
+#endif
