@@ -47,16 +47,12 @@ int main(void) {
   Transform cube2 = {
       {1.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}};
 
-  const char *files[] = {
-    "assets/skybox/right.jpg",
-    "assets/skybox/left.jpg",
-    "assets/skybox/top.jpg",
-    "assets/skybox/bottom.jpg",
-    "assets/skybox/front.jpg",
-    "assets/skybox/back.jpg"};
+  const char *files[] = {"assets/skybox/right.jpg", "assets/skybox/left.jpg",
+                         "assets/skybox/top.jpg",   "assets/skybox/bottom.jpg",
+                         "assets/skybox/front.jpg", "assets/skybox/back.jpg"};
 
   int skycubemap = cubemap_load(6, files);
-  SkyBox skybox  = skybox_init(skyboxShader, skycubemap);
+  SkyBox skybox = skybox_init(skyboxShader, skycubemap);
 
   float angle = 0.0f;
   float step = 1.0f;
@@ -65,14 +61,13 @@ int main(void) {
   double previousTime = glfwGetTime();
   int frameCount = 0;
   while (app_running(window, bgColor)) {
-      double currentTime = glfwGetTime();
-      frameCount++;
-      if (currentTime - previousTime >= 1.0)
-      {
-          printf("FPS: %d\n", frameCount);
-          frameCount = 0;
-          previousTime = currentTime;
-      }
+    double currentTime = glfwGetTime();
+    frameCount++;
+    if (currentTime - previousTime >= 1.0) {
+      printf("FPS: %d\n", frameCount);
+      frameCount = 0;
+      previousTime = currentTime;
+    }
 
     processInput(window, &c);
     cube1.rotation[0] += step;

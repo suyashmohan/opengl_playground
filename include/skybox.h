@@ -4,14 +4,14 @@
 #include "engine.h"
 
 typedef struct SkyBox {
-    int shader;
-    unsigned int cubemap;
-    unsigned int vao;
-    unsigned int vbo;
-    struct {
-        int skybox;
-        int view;
-        int projection;
+  int shader;
+  unsigned int cubemap;
+  unsigned int vao;
+  unsigned int vbo;
+  struct {
+    int skybox;
+    int view;
+    int projection;
   } location;
 } SkyBox;
 

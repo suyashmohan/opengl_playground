@@ -263,7 +263,7 @@ unsigned int texture_load(const char *file) {
   glBindTexture(GL_TEXTURE_2D, texture);
 
   int imgW, imgH, nrChannels;
-  //stbi_set_flip_vertically_on_load(true);
+  // stbi_set_flip_vertically_on_load(true);
   unsigned char *data = stbi_load(file, &imgW, &imgH, &nrChannels, 0);
   if (!data) {
     printf("Unabel to load image: %s\n", file);
@@ -292,17 +292,17 @@ unsigned int cubemap_load(int count, const char *file[]) {
   unsigned int texture;
   glGenTextures(1, &texture);
   glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
-  
+
   int width, height, nrChannels;
-  for(unsigned int i=0; i < count; ++i) {
+  for (unsigned int i = 0; i < count; ++i) {
     unsigned char *data = stbi_load(file[i], &width, &height, &nrChannels, 0);
     if (!data) {
       printf("Unabel to load image: %s\n", file);
       exit(EXIT_FAILURE);
       return 0;
     }
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-      0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height,
+                 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     stbi_image_free(data);
   }
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -314,9 +314,7 @@ unsigned int cubemap_load(int count, const char *file[]) {
   return texture;
 }
 
-void cubemap_destroy(unsigned int cubemap) {
-  glDeleteTextures(1, &cubemap);
-}
+void cubemap_destroy(unsigned int cubemap) { glDeleteTextures(1, &cubemap); }
 
 void transform_mat4(mat4 m, Transform transform) {
   glm_mat4_identity(m);
